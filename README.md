@@ -4,6 +4,34 @@
 
 English · [简体中文](./README.zh-CN.md)
 
+## Install from npm
+
+```bash
+npm install @fylar/office-sdk
+```
+
+The package targets modern browsers and includes its workers, WebAssembly
+modules, locale assets, and styles. Keep the package directory structure intact
+when deploying it as static assets, or use a bundler that preserves the runtime
+asset URLs.
+
+```ts
+import OfficeSdk from "@fylar/office-sdk";
+
+const { widget } = await OfficeSdk.openfile({
+  fileName: "demo.docx",
+  file: fileBlob
+});
+
+const app = await widget.mount("#office-container").render();
+```
+
+Optional runtime preloading is available through:
+
+```ts
+import "@fylar/office-sdk/preload";
+```
+
 ## Directory Overview
 
 | Directory | Description |

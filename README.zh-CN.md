@@ -4,6 +4,33 @@
 
 [English](./README.md) · 简体中文
 
+## 通过 npm 安装
+
+```bash
+npm install @fylar/office-sdk
+```
+
+该包面向现代浏览器，包含所需的 Worker、WebAssembly、语言资源和样式文件。
+以静态资源方式部署时需要保持包目录结构不变；通过构建工具接入时，需要确保
+运行时资源 URL 和相关文件能够被正确保留或输出。
+
+```ts
+import OfficeSdk from "@fylar/office-sdk";
+
+const { widget } = await OfficeSdk.openfile({
+  fileName: "demo.docx",
+  file: fileBlob
+});
+
+const app = await widget.mount("#office-container").render();
+```
+
+如果需要提前加载运行时资源，可以额外引入：
+
+```ts
+import "@fylar/office-sdk/preload";
+```
+
 ## 目录说明
 
 | 目录 | 说明 |

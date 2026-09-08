@@ -1,5 +1,5 @@
 {
-  "name": "@office/office-sdk",
+  "name": "@fylar/office-sdk",
   "version": "1.0.0",
   "generatedAt": "2026-09-08T09:10:40.202Z",
   "format": "esm",
@@ -24,7 +24,10 @@
       "./worker/wasm/canvaskit.wasm",
       "./worker/wasm/cfb2ooxml.wasm",
       "./worker/wasm/emfjs.wasm",
-      "./worker/wasm/vml2dml.wasm"
+      "./worker/wasm/omath.wasm",
+      "./worker/wasm/ooxmlcrypt.wasm",
+      "./worker/wasm/vml2dml.wasm",
+      "./worker/wasm/wordart_generate.wasm"
     ]
   },
   "internalChunks": {

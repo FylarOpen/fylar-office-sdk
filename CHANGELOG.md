@@ -5,9 +5,9 @@
 ### Changed
 
 - SDK source, demo, documentation and release ownership moved to the standalone
-  `bamboo.sdk` repository.
+  `fylar.sdk` repository.
 - Runtime, locale, worker and WASM assets are resolved relative to the SDK
-  package and no longer require `bamboo.server`.
+  package and no longer require `fylar.server`.
 - The source development host reports an explicit
   `NATIVE_FONT_TOOLING_UNAVAILABLE` response when optional native font tooling
   is not installed.

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Office SDK Full Evaluation</title>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+                  .register("/lib/service-worker.js")
+                  .then((registration) => {
+                    console.log("Service Worker registered:", registration.scope);
+                  })
+                  .catch((error) => {
+                    console.error("Service Worker registration failed:", error);
+                  });
+        });
+      }
+    </script>
+    <script type="module" crossorigin src="./assets/index-CKoEv7gi.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DWgfvujM.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+  </html>

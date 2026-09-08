@@ -1,0 +1,208 @@
+html,
+body,
+#app {
+  margin: 0;
+  height: 100%;
+  font-family: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #eef3f8;
+  color: #102132;
+}
+
+.office-sdk-demo-panel button,
+.office-sdk-demo-panel input,
+.office-sdk-demo-panel select {
+  font: inherit;
+}
+
+.office-sdk-demo {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 18px;
+  height: 100vh;
+  padding: 24px;
+}
+
+.office-sdk-demo-panel {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  min-height: 0;
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid #d9e2ec;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 18px 40px rgba(16, 33, 50, 0.08);
+}
+
+.office-sdk-demo-eyebrow {
+  margin: 0 0 6px;
+  color: #1f6feb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.office-sdk-demo-panel h1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.office-sdk-demo-muted {
+  margin: 8px 0 0;
+  color: #52606d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.office-sdk-demo-block {
+  display: grid;
+  gap: 10px;
+}
+
+.office-sdk-demo-block h2 {
+  margin: 0;
+  color: #1f6feb;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.office-sdk-demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.office-sdk-demo-file-picker,
+.office-sdk-demo-panel button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid #b8c4d1;
+  border-radius: 999px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.office-sdk-demo-file-picker:hover,
+.office-sdk-demo-panel button:hover {
+  transform: translateY(-1px);
+  border-color: #1f6feb;
+  box-shadow: 0 10px 22px rgba(31, 111, 235, 0.14);
+}
+
+.office-sdk-demo-file-picker input {
+  display: none;
+}
+
+.office-sdk-demo-panel button {
+  color: #ffffff;
+  border-color: #1f6feb;
+  background: #1f6feb;
+}
+
+.office-sdk-demo-panel button.office-sdk-demo-secondary {
+  color: #102132;
+  border-color: #b8c4d1;
+  background: #ffffff;
+}
+
+.office-sdk-demo-meta {
+  color: #52606d;
+  font-size: 13px;
+}
+
+.office-sdk-demo-form-grid {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.office-sdk-demo-form-grid label {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.office-sdk-demo-form-grid label.office-sdk-demo-inline {
+  grid-template-columns: 18px minmax(0, 1fr);
+}
+
+.office-sdk-demo-form-grid select {
+  height: 32px;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid #b8c4d1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.office-sdk-demo-create-select {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #b8c4d1;
+  border-radius: 999px;
+  color: #102132;
+  background: #ffffff;
+}
+
+.office-sdk-demo-status {
+  margin: 0;
+  color: #1b4332;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.office-sdk-demo-error {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fff5f5;
+  color: #b42318;
+  font-size: 13px;
+}
+
+.office-sdk-demo-error p {
+  margin: 0;
+}
+
+.office-sdk-demo-hint {
+  margin: 0;
+  color: #52606d;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.office-sdk-demo-viewer-shell {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid #d9e2ec;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 20px 45px rgba(16, 33, 50, 0.08);
+}
+
+@media (max-width: 920px) {
+  .office-sdk-demo {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    padding: 16px;
+  }
+}

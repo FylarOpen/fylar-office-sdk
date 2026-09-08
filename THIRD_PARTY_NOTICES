@@ -1,0 +1,298 @@
+THIRD-PARTY NOTICES AND LICENSE INFORMATION
+Last reviewed: 2026-09-08
+
+This file covers third-party code and data detected in the published Fylar
+Office SDK artifacts. The proprietary SDK license is in legal.txt. Third-party
+components remain subject to their own license terms.
+
+LICENSE NOTES
+
+1. FreeType build option
+
+FreeType is dual-licensed. This proprietary distribution assumes the FreeType
+License option, not GPLv2. Preserve the FreeType notice below and retain the
+complete FTL.TXT that corresponds to the linked build. If build records do not
+confirm that selection, regenerate the affected WebAssembly artifacts from a
+known dependency manifest before release.
+
+2. Schema and generated-data provenance
+
+lib/worker/xsd.zip contains OOXML, Dublin Core, Microsoft extension, and
+bishengoffice.com namespace schemas. Existing schema headers must be preserved.
+The release owner must have provenance and redistribution rights for the
+bishengoffice.com schemas and for any schema-derived generated tables. This
+artifact scan cannot establish ownership of those files.
+
+COMPONENT INVENTORY
+
+A. JavaScript runtime
+
+- Vue 3.5.40: @vue/shared, @vue/reactivity, @vue/runtime-core,
+  @vue/runtime-dom, @vue/compiler-core, and @vue/compiler-dom.
+  License: MIT.
+  Copyright: 2018-present Yuxi (Evan) You and Vue contributors.
+  Source/license: https://github.com/vuejs/core
+
+- Vuex 4.1.0.
+  License: MIT.
+  Copyright notice in the distributed bundle: 2022 Evan You.
+  Source/license: https://github.com/vuejs/vuex
+
+- vue-i18n and Intlify runtime modules 9.14.5.
+  License: MIT.
+  Copyright notice in the distributed bundle: 2025 Kazuya Kawaguchi.
+  Source/license: https://github.com/intlify/vue-i18n
+
+- js-cookie 3.0.1 compatibility code.
+  Included in: lib/office.core.js.
+  License: MIT.
+  Authors: Klaus Hartl, Fagner Brack, and contributors.
+  Source/license: https://github.com/js-cookie/js-cookie
+
+- blueimp JavaScript MD5 2.19.0 compatibility code.
+  Included in: lib/office.core.js.
+  License: MIT.
+  Copyright: 2011 Sebastian Tschan.
+  Based on Paul Johnston's JavaScript MD5 implementation; preserve any BSD
+  attribution retained by the upstream distribution.
+  Source/license:
+  https://github.com/blueimp/JavaScript-MD5/tree/v2.19.0
+
+- XRegExp-All 3.0.0.
+  Included in: lib/vendor/xregexp-all-min.js.
+  License: MIT.
+  Copyright: Steven Levithan and contributors.
+  Source/license: https://github.com/slevithan/xregexp
+
+- Zepto 1.2.0-30-gb5ed8d6.
+  Included in: lib/vendor/zepto.min.js.
+  License: MIT.
+  Copyright: Zepto contributors.
+  Source/license: https://github.com/madrobby/zepto
+
+- Naive UI.
+  Version: not embedded in the distributed banner.
+  License: MIT.
+  Copyright: 2021 TuSimple.
+  Source/license: https://github.com/tusen-ai/naive-ui
+  Note: Naive UI result graphics, if separately copied into a release, are
+  licensed under CC BY 4.0 and require separate attribution.
+
+- css-render.
+  Version: not embedded in the distributed banner.
+  License: MIT.
+  Source/license: https://github.com/07akioni/css-render
+
+- @vicons/ionicons5 / Ionicons.
+  Version: not embedded in the distributed banner.
+  License: MIT.
+  Copyright: 2015-present Ionic.
+  Source/license: https://github.com/ionic-team/ionicons
+
+- deepmerge.
+  Version: not embedded in the distributed banner.
+  License: MIT.
+  Copyright: 2012 James Halliday, Josh Duff, and other contributors.
+  Source/license: https://github.com/TehShrike/deepmerge
+
+B. Worker and WebAssembly runtime
+
+The following components were identified from embedded version, symbol, path,
+or copyright strings in lib/worker/wasm/*.wasm and their JavaScript loaders.
+Where a version is not listed, the artifact does not expose a reliable version;
+the exact version must be recovered from the build manifest before the next
+rebuild.
+
+- Emscripten-generated runtime.
+  License: MIT and University of Illinois/NCSA open-source license.
+  Copyright: Emscripten authors.
+  Source/license: https://github.com/emscripten-core/emscripten
+
+- Skia / CanvasKit, milestone string m140.
+  Included in: canvaskit.wasm.
+  License: BSD-3-Clause, plus the licenses of bundled third-party components.
+  Copyright: 2011 Google Inc.
+  Source/license: https://skia.googlesource.com/skia/+/main/LICENSE
+
+- Apache Xerces-C 3.3.0.
+  Included in: bootloader.wasm.
+  License: Apache-2.0.
+  Copyright: The Apache Software Foundation and contributors.
+  Source/license: https://github.com/apache/xerces-c
+  Preserve the upstream NOTICE file as required by Apache-2.0.
+
+- libxml2.
+  Included in: ooxmlcrypt.wasm and emfjs.wasm.
+  License: MIT-style libxml2 license.
+  Copyright: Daniel Veillard and contributors.
+  Source/license: https://github.com/GNOME/libxml2
+
+- libpng.
+  Included in: cfb2ooxml.wasm, omath.wasm, canvaskit.wasm, and emfjs.wasm.
+  License: libpng-2.0 or the corresponding legacy libpng license for the exact
+  linked version.
+  Source/license: https://github.com/pnggroup/libpng
+
+- zlib.
+  Included in multiple WebAssembly artifacts.
+  License: Zlib.
+  Copyright: Jean-loup Gailly and Mark Adler.
+  Source/license: https://github.com/madler/zlib
+
+- libjpeg and libjpeg-turbo 3.1.0.
+  Included in: omath.wasm, canvaskit.wasm, and emfjs.wasm.
+  Licenses: Independent JPEG Group license and, for libjpeg-turbo,
+  BSD-3-Clause plus applicable SIMD licenses.
+  Required attribution: This software is based in part on the work of the
+  Independent JPEG Group.
+  Source/license: https://github.com/libjpeg-turbo/libjpeg-turbo
+
+- LibTIFF.
+  Included in: omath.wasm and emfjs.wasm.
+  License: libtiff license.
+  Copyright: 1988-1997 Sam Leffler; 1991-1997 Silicon Graphics, Inc.
+  Source/license: https://gitlab.com/libtiff/libtiff/-/blob/master/LICENSE.md
+
+- FreeType.
+  Included in: omath.wasm, wordart_generate.wasm, canvaskit.wasm, and
+  emfjs.wasm.
+  Selected license for this proprietary distribution: FreeType License (FTL).
+  Copyright notice: preserve the exact notice and year range from the FTL.TXT
+  corresponding to the linked FreeType version.
+  Source/license: https://github.com/freetype/freetype/blob/master/docs/FTL.TXT
+
+- ICU / Unicode data.
+  Data identifiers found: icudt56l, icudt73l, and icudt74l.
+  Included in: wordart_generate.wasm, emfjs.wasm, and canvaskit.wasm.
+  License: the ICU License and Unicode data license corresponding to each
+  embedded ICU data version.
+  Copyright: Unicode, Inc. and other copyright owners identified by the
+  license corresponding to each embedded data version.
+  Source/license: https://github.com/unicode-org/icu
+
+- HarfBuzz.
+  Included in: canvaskit.wasm.
+  License: Old-MIT.
+  Copyright: the HarfBuzz copyright holders listed in upstream COPYING.
+  Source/license: https://github.com/harfbuzz/harfbuzz/blob/main/COPYING
+
+- Little CMS 2.
+  Included in: emfjs.wasm.
+  License: MIT.
+  Copyright: Marti Maria Saguer and contributors.
+  Source/license: https://github.com/mm2/Little-CMS
+
+- WebP codec library.
+  Included in: canvaskit.wasm and emfjs.wasm.
+  License: BSD-3-Clause; see the upstream PATENTS file for the patent grant.
+  Copyright: Google Inc. and contributors.
+  Source/license: https://github.com/webmproject/libwebp
+
+- dcraw 8.93.
+  Included in: emfjs.wasm.
+  License: special dcraw redistribution terms; GPL or commercial licensing may
+  apply depending on the functions included.
+  Copyright: Dave Coffin.
+  Source/license: https://github.com/ImageMagick/dcraw/blob/main/dcraw.c
+
+C. Schema and metadata assets
+
+- Office Open XML and extension schemas.
+  Included in: lib/worker/xsd.zip.
+  Identified namespaces include ECMA/ISO OOXML, Microsoft Open Specifications,
+  Dublin Core metadata, and bishengoffice.com extensions.
+  Preserve all copyright and attribution headers in the archive. Relevant
+  standards and Microsoft extension schemas remain subject to their respective
+  publication and implementation terms.
+
+COMMON LICENSE TEXTS
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The applicable copyright notices above and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+BSD 3-Clause License
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the applicable copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the applicable copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Zlib License
+
+This software is provided 'as-is', without any express or implied warranty. In
+no event will the authors be held liable for any damages arising from the use
+of this software.
+
+Permission is granted to anyone to use this software for any purpose, including
+commercial applications, and to alter it and redistribute it freely, subject
+to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim
+   that you wrote the original software. If you use this software in a product,
+   an acknowledgment in the product documentation would be appreciated but is
+   not required.
+
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source distribution.
+
+ADDITIONAL LICENSE FILES
+
+Some components use project-specific or longer license texts. The corresponding
+verbatim upstream license and notice files must travel with every binary
+distribution in which the component is present. At minimum, preserve:
+
+- Apache License 2.0 and the Xerces-C NOTICE file;
+- FreeType FTL.TXT;
+- the libpng license for the exact linked version;
+- the ICU and Unicode data licenses for ICU 56, 73, and 74;
+- the libjpeg-turbo LICENSE.md, README, and applicable SIMD license notices;
+- the LibTIFF LICENSE.md;
+- HarfBuzz COPYING;
+- the libxml2 Copyright file;
+- the libwebp COPYING and PATENTS files; and
+- the dcraw license or commercial-license evidence applicable to emfjs.wasm.
+
+This repository currently distributes compiled artifacts without their build
+manifests. Future releases should generate an SBOM and copy the exact upstream
+license files during the build, rather than relying on binary-string detection.
+
+Do not remove copyright or license notices from third-party files.

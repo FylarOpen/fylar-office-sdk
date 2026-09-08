@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Office SDK HTML Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="office-sdk-demo">
+      <aside class="office-sdk-demo-panel">
+        <div>
+          <p class="office-sdk-demo-eyebrow">HTML Demo</p>
+          <h1>Office SDK 集成示例</h1>
+          <p class="office-sdk-demo-muted">
+            打开或新建 Word、Excel、PowerPoint 文档，演示 SDK 的挂载、重置与基础 UI 选项。
+          </p>
+        </div>
+
+        <section class="office-sdk-demo-block">
+          <h2>1. 打开或新建文件</h2>
+          <div class="office-sdk-demo-controls">
+            <label class="office-sdk-demo-file-picker" for="file-input">
+              <span>选择文件</span>
+              <input id="file-input" type="file" />
+            </label>
+            <button id="open-button" type="button">打开文件</button>
+            <button id="reset-button" type="button" class="office-sdk-demo-secondary">重置</button>
+          </div>
+          <div class="office-sdk-demo-controls">
+            <select id="create-doc-type" class="office-sdk-demo-create-select" aria-label="新建文件类型"></select>
+            <button id="create-button" type="button">新建文件</button>
+          </div>
+          <div class="office-sdk-demo-meta">
+            <span>当前文件：</span>
+            <strong id="filename">未选择文件</strong>
+          </div>
+        </section>
+
+        <section class="office-sdk-demo-block">
+          <h2>2. 打开选项</h2>
+          <div class="office-sdk-demo-form-grid">
+            <label>
+              <span>语言</span>
+              <select id="opt-lang"></select>
+            </label>
+            <label class="office-sdk-demo-inline">
+              <input id="opt-readonly" type="checkbox" />
+              <span>只读模式</span>
+            </label>
+            <label class="office-sdk-demo-inline">
+              <input id="opt-topbar" type="checkbox" checked />
+              <span>显示顶部工具栏</span>
+            </label>
+            <label class="office-sdk-demo-inline">
+              <input id="opt-bottombar" type="checkbox" checked />
+              <span>显示底部状态栏</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="office-sdk-demo-block">
+          <h2>3. 状态</h2>
+          <p id="status" class="office-sdk-demo-status">请通过本地静态服务打开本页（勿使用 file://）。</p>
+          <div id="error" class="office-sdk-demo-error" hidden>
+            <strong id="error-title"></strong>
+            <p id="error-detail"></p>
+          </div>
+          <p class="office-sdk-demo-hint">如果资源加载失败，请确认从 SDK包 根目录启动静态服务，并完整保留 lib 目录结构。</p>
+        </section>
+      </aside>
+
+      <section class="office-sdk-demo-viewer-shell">
+        <div id="viewer"></div>
+      </section>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+FYLAR OFFICE SDK COMMERCIAL LICENSE
+Version 1.0, effective 2026-09-08
+
+Copyright (c) 2026 Fylar and its applicable rights holders.
+All rights reserved.
+
+IMPORTANT: THIS IS A PROPRIETARY COMMERCIAL LICENSE, NOT AN OPEN-SOURCE
+LICENSE. BY DOWNLOADING, INSTALLING, COPYING, ACCESSING, OR USING THE SDK, YOU
+AGREE TO THESE TERMS. IF YOU DO NOT AGREE, DO NOT USE THE SDK.
+
+1. Definitions
+
+"Licensor" means the entity that owns or is authorized to license the Fylar
+Office SDK and provides it through an official Fylar distribution channel, as
+further identified in any applicable order form or commercial agreement.
+
+"SDK" means this Fylar Office SDK package, including its source-readable,
+minified, binary, WebAssembly, worker, documentation, sample, and related
+runtime files, but excluding Third-Party Components.
+
+"Licensee" or "you" means the individual or legal entity accepting this
+License.
+
+"License Credential" means a key, token, account, entitlement, or other
+identifier issued or accepted by Licensor for the SDK.
+
+"Licensee Application" means a product or service developed by Licensee that
+uses the SDK as an embedded component and is not marketed or distributed as a
+standalone SDK or a substantially similar substitute for the SDK.
+
+"Metered Use" means one usage event that the SDK licensing service successfully
+accepts and records against a License Credential. The licensing service's
+records control the usage count, subject to correction of demonstrable errors.
+Rejected or unsuccessful validation requests are not Metered Uses.
+
+"Free Allowance" means an aggregate maximum of 3,000 Metered Uses for each
+License Credential or associated customer account, as determined by Licensor.
+The Free Allowance is shared across all users, devices, environments, and
+deployments using that credential or account. It does not renew when the SDK is
+reinstalled, upgraded, or used with another device, and multiple credentials
+may not be combined to evade the limit.
+
+2. Limited License Grant
+
+Subject to this License, Licensor grants Licensee a limited, non-exclusive,
+non-transferable, non-sublicensable, revocable license to:
+
+(a) download, install, and reproduce reasonable copies of the SDK for
+    evaluation, development, testing, and operation of Licensee Applications;
+
+(b) use the SDK in Licensee Applications for up to the Free Allowance; and
+
+(c) distribute the unmodified SDK runtime files only as an embedded part of a
+    Licensee Application, provided that the SDK is not offered separately and
+    all copyright, license, attribution, and technical protection notices are
+    retained.
+
+The Free Allowance may be used for evaluation, development, testing, or limited
+production operation. It has no cash value and may not be sold or transferred.
+All rights not expressly granted are reserved by Licensor.
+
+3. Use After the Free Allowance
+
+When the Free Allowance is exhausted, Licensee must stop using and deploying
+the SDK unless Licensor has granted an active paid entitlement or another
+written commercial license. Paid plans, additional usage, support, service
+levels, and other commercial rights are governed by the applicable order form
+or separate written agreement. If that agreement conflicts with this License,
+the separate written agreement controls for its subject matter.
+
+4. License Validation and Metering
+
+The SDK may contact Licensor's licensing service, including
+https://licenseopen.fylar.ai, to validate a License Credential, measure Metered
+Uses, prevent abuse, and administer entitlements. This communication may
+include the License Credential and technical or usage data reasonably necessary
+for those purposes. Licensee is responsible for providing any notices and
+obtaining any consents required for its deployment and end users.
+
+Licensee must not disable, bypass, falsify, interfere with, or conceal events
+from license validation, metering, usage limits, or other access controls.
+
+5. Restrictions
+
+Except where applicable law expressly prohibits a restriction, Licensee may
+not:
+
+(a) sell, rent, lease, lend, sublicense, publish, mirror, or redistribute the
+    SDK as a standalone product, development kit, source package, or hosted
+    substitute;
+
+(b) modify, translate, reverse engineer, decompile, disassemble, or otherwise
+    attempt to derive non-source portions of the SDK, except to the limited
+    extent necessary to integrate documented interfaces or expressly permitted
+    by applicable law;
+
+(c) remove or alter proprietary, copyright, attribution, license, or technical
+    protection notices;
+
+(d) use the SDK or its non-public implementation details to create, train, or
+    improve a competing office SDK, document engine, or substantially similar
+    product; or
+
+(e) use the SDK unlawfully or in a manner that infringes third-party rights.
+
+6. Ownership and Feedback
+
+The SDK is licensed, not sold. Licensor and its licensors retain all right,
+title, and interest in the SDK. If Licensee voluntarily provides feedback,
+Licensee grants Licensor a perpetual, worldwide, irrevocable, royalty-free
+license to use and incorporate that feedback without restriction.
+
+7. Third-Party Components
+
+Third-Party Components are licensed under their respective terms, not this
+License. Required notices and known license information are provided in
+THIRD_PARTY_NOTICES. If a third-party license conflicts with this License for a
+Third-Party Component, the third-party license controls for that component.
+
+8. Updates, Support, and Availability
+
+This License does not require Licensor to provide updates, maintenance,
+support, compatibility, hosting, or continued availability of the SDK or its
+licensing service. Any such commitments must be stated in a separate written
+agreement.
+
+9. Termination
+
+This License terminates automatically upon Licensee's material breach. On
+termination or expiration of the applicable entitlement, Licensee must stop
+using and distributing the SDK and remove it from Licensee Applications and
+systems under Licensee's control, except for copies required by law. Sections
+5 through 12 survive termination to the extent applicable.
+
+10. Disclaimer
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE SDK AND LICENSING SERVICE ARE
+PROVIDED "AS IS" AND "AS AVAILABLE," WITHOUT WARRANTIES OF ANY KIND, EXPRESS,
+IMPLIED, OR STATUTORY, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, ACCURACY, OR UNINTERRUPTED OR
+ERROR-FREE OPERATION.
+
+11. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, LICENSOR AND ITS AFFILIATES, SUPPLIERS,
+AND LICENSORS WILL NOT BE LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR FOR LOST PROFITS, REVENUE,
+DATA, GOODWILL, OR BUSINESS INTERRUPTION, ARISING FROM OR RELATED TO THE SDK OR
+THIS LICENSE, EVEN IF ADVISED OF THE POSSIBILITY. LICENSOR'S TOTAL AGGREGATE
+LIABILITY WILL NOT EXCEED THE GREATER OF (A) THE AMOUNT LICENSEE PAID LICENSOR
+FOR THE SDK DURING THE 12 MONTHS BEFORE THE EVENT GIVING RISE TO LIABILITY OR
+(B) US$100. THESE LIMITATIONS APPLY ONLY TO THE EXTENT PERMITTED BY LAW.
+
+12. General
+
+Licensee must comply with applicable export-control, sanctions, privacy, and
+other laws. Licensee may not assign this License without Licensor's prior
+written consent. If any provision is unenforceable, it will be limited to the
+minimum extent necessary and the remaining provisions will remain effective.
+Failure to enforce a provision is not a waiver. This License and any applicable
+written commercial agreement constitute the entire agreement regarding the SDK.
+
+For paid licensing or questions about usage records, contact Licensor through
+an official Fylar distribution or support channel.

@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en" data-theme="os">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XLSX API · Office SDK Developer Documentation</title>
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <button id="menu-btn" class="menu-btn" type="button">Menu</button>
+    <a class="brand" href="../index.html"><span>Office SDK Developer Documentation</span></a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="Search documentation..." autocomplete="off">
+      <ul id="search-results" class="search-results"></ul>
+    </div>
+    <nav class="language-switch" aria-label="Language">
+<a class="language-link" href="../../zh-CN/api-reference/xlsx.html">简体中文</a>
+<a class="language-link current" href="xlsx.html">English</a>
+</nav>
+    <select id="theme-select" class="theme-select" aria-label="Display">
+      <option value="os">System</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </header>
+  <div class="shell">
+    <aside class="sidebar"><div class="nav-card">
+<p class="nav-heading">Documentation</p>
+<a class="nav-home" href="../index.html">Office SDK Developer Documentation</a>
+<div class="nav-group">
+<div class="nav-group-title">Product Overview</div>
+<ul class="nav-list">
+<li><a class="" href="../product-overview/office-sdk-overview.html">Office SDK Overview</a></li>
+</ul></div>
+<div class="nav-group">
+<div class="nav-group-title">Development Guide</div>
+<ul class="nav-list">
+<li><a class="" href="../development-guide/getting-started.html">Development Guide: Getting Started</a></li>
+<li><a class="" href="../development-guide/package-structure.html">Development Guide: Package Structure</a></li>
+<li><a class="" href="../development-guide/usage-guide.html">Development Guide: Usage Guide</a></li>
+<li><a class="" href="../development-guide/csp.html">Development Guide: CSP Deployment Guide</a></li>
+</ul></div>
+<div class="nav-group">
+<div class="nav-group-title"><a class="" href="index.html">API Reference</a></div>
+<ul class="nav-list">
+<li><a class="" href="common.html">Common API Conventions</a></li>
+<li><a class="" href="docx.html">DOCX API</a></li>
+<li><a class="current" href="xlsx.html">XLSX API</a></li>
+<li><a class="" href="pptx.html">PPTX API</a></li>
+</ul></div>
+</div></aside>
+    <main class="content-card">
+      <div class="breadcrumb"><a href="../index.html">Office SDK Developer Documentation</a> <span>/</span> API Reference</div>
+      <h1 class="page-title">XLSX API</h1>
+      <article class="doc-content">
+<p>XLSX APIs are called through the <code>app</code> returned by <code>widget.render()</code>:</p>
+<pre><code class="language-ts">const { widget } = await OfficeSdk.openfile({ docId: &quot;demo-xlsx&quot;, fileName: &quot;demo.xlsx&quot;, file });
+const app = await widget.mount(&quot;#office-container&quot;).render();
+</code></pre>
+<h2 id="components">Components<a class="heading-anchor" href="#components" aria-label="Link to this heading">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Component</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Document</code></td>
+  <td>Export, zoom, editing state, and loading events</td>
+</tr>
+<tr>
+  <td><code>Workbook</code></td>
+  <td>Worksheets, palette, number formats, and protection state</td>
+</tr>
+<tr>
+  <td><code>Worksheet</code></td>
+  <td>Rows, columns, freeze panes, row height, and column width</td>
+</tr>
+<tr>
+  <td><code>Selection</code></td>
+  <td>Current selection content, font, borders, fill, alignment, and number format</td>
+</tr>
+<tr>
+  <td><code>Finder</code></td>
+  <td>Search, previous/next result, and search status</td>
+</tr>
+<tr>
+  <td><code>Cursor</code></td>
+  <td>Current mouse/cursor target area</td>
+</tr>
+<tr>
+  <td><code>UndoRedo</code></td>
+  <td>Undo, redo, and availability state</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="quick-example">Quick Example<a class="heading-anchor" href="#quick-example" aria-label="Link to this heading">#</a></h2>
+<pre><code class="language-ts">app.Document.setZoom(125);
+app.Selection.setBold(true);
+app.Selection.setFillColor({ r: 255, g: 242, b: 204 });
+await app.Worksheet.insertRows();
+
+app.Finder.search(&quot;revenue&quot;);
+app.Finder.selectNext();
+</code></pre>
+<p>Event example:</p>
+<pre><code class="language-ts">function onSelectionChange(info) {
+  console.log(info);
+}
+
+app.Selection.addEventListener(&quot;SELECTION_CHANGE&quot;, onSelectionChange);
+</code></pre>
+<h2 id="document">Document<a class="heading-anchor" href="#document" aria-label="Link to this heading">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Signature</th>
+  <th>Returns</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>isEditing</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>Whether a cell is currently being edited.</td>
+</tr>
+<tr>
+  <td><code>setZoom</code></td>
+  <td><code>(value: number, redraw?: boolean): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>Sets zoom percentage. <code>redraw</code> defaults to <code>true</code>; returns the underlying zoom operation result.</td>
+</tr>
+<tr>
+  <td><code>getZoom</code></td>
+  <td><code>(): number</code></td>
+  <td><code>number</code></td>
+  <td>Gets zoom percentage.</td>
+</tr>
+<tr>
+  <td><code>focusEditor</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Currently a no-op in the XLSX implementation.</td>
+</tr>
+<tr>
+  <td><code>updateVisibleArea</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Redraws the visible area of the current active worksheet.</td>
+</tr>
+<tr>
+  <td><code>exportDocument</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>Exports the original workbook.</td>
+</tr>
+<tr>
+  <td><code>exportPdf</code></td>
+  <td><code>(printOptions?: unknown): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>Exports PDF with print options.</td>
+</tr>
+<tr>
+  <td><code>copy</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>Copies the current selection.</td>
+</tr>
+<tr>
+  <td><code>cut</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>Cuts the current selection.</td>
+</tr>
+<tr>
+  <td><code>paste</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>Pastes into the current selection.</td>
+</tr>
+<tr>
+  <td><code>startReadOnly</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Enters read-only state.</td>
+</tr>
+<tr>
+  <td><code>endReadOnly</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Exits read-only state.</td>
+</tr>
+<tr>
+  <td><code>isReadOnly</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>Gets the current read-only state.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Example:</p>
+<pre><code class="language-ts">if (!app.Document.isEditing()) {
+  app.Document.setZoom(110);
+}
+
+await app.Document.exportDocument();
+await app.Document.exportPdf();
+</code></pre>
+<p>Clipboard notes:</p>
+<p><code>copy()</code>, <code>cut()</code>, and <code>paste()</code> depend on the browser Clipboard API, a secure context, and user permission. Some browsers do not allow writing the editor's custom MIME type to the system clipboard. In that case a <code>NotAllowedError</code> may be thrown, but the document remains editable. Catch the error and guide users to use the system shortcut.</p>
+<p>Document component events:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Event Name</th>
+  <th>Payload</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>XLSX_WORKSHEET_LOADED</code></td>
+  <td>None</td>
+  <td>Worksheet loaded.</td>
+</tr>
+<tr>
+  <td><code>XLSX_END_LOADING</code></td>
+  <td>None</td>
+  <td>Document loading completed.</td>
+</tr>
+<tr>
+  <td><code>DOCUMENT_EXPORT_READY</code></td>
+  <td>None</td>
+  <td>Export completed.</td>
+</tr>
+<tr>
+  <td><code>XLSX_EDITING_STATUS_CHANGE</code></td>
+  <td><code>(status: boolean)</code></td>
+  <td>Cell editing state changed.</td>
+</tr>
+<tr>
+  <td><code>XLSX_ZOOM_CHANGE</code></td>
+  <td>None</td>
+  <td>Zoom changed.</td>
+</tr>
+<tr>
+  <td><code>XLSX_WORKSHEET_LOADING_RATIO</code></td>
+  <td><code>(ratio: number)</code></td>
+  <td>Worksheet loading progress.</td>
+</tr>
+<tr>
+  <td><code>XLSX_FIRST_PART_LOADING</code></td>
+  <td>None</td>
+  <td>First batch content loaded.</td>
+</tr>
+<tr>
+  <td><code>XLSX_WORKSHEET_CHANGE</code></td>
+  <td><code>({ sheetProtected?: boolean })</code></td>
+  <td>Current worksheet changed.</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>exportPdf(...)</code> requires a secure context (normally HTTPS or localhost), <code>window.queryLocalFonts</code>, and permission to access local fonts. If these requirements are not met, the current implementation does not perform the PDF export.</p>
+<h2 id="workbook">Workbook<a class="heading-anchor" href="#workbook" aria-label="Link to this heading">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Signature</th>
+  <th>Returns</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>addWorksheet</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Adds a worksheet.</td>
+</tr>
+<tr>
+  <td><code>setWorksheetName</code></td>
+  <td><code>(name: string, index?: number): boolean \| number</code></td>
+  <td><code>boolean \| number</code></td>
+  <td>Sets worksheet name. If <code>index</code> is omitted, the active worksheet is used. Returns success or a name-validation status code.</td>
+</tr>
+<tr>
+  <td><code>deleteWorksheet</code></td>
+  <td><code>(index?: number): void</code></td>
+  <td><code>void</code></td>
+  <td>Deletes a worksheet. If <code>index</code> is omitted, the active worksheet is deleted.</td>
+</tr>
+<tr>
+  <td><code>getWorksheetName</code></td>
+  <td><code>(index?: number): string</code></td>
+  <td><code>string</code></td>
+  <td>Gets worksheet name. If <code>index</code> is omitted, the active worksheet is read.</td>
+</tr>
+<tr>
+  <td><code>getColorPalette</code></td>
+  <td><code>(): { theme: unknown[]; standard: unknown[] }</code></td>
+  <td><code>{ theme; standard }</code></td>
+  <td>Gets the color palette.</td>
+</tr>
+<tr>
+  <td><code>getCellNumberFormats</code></td>
+  <td><code>(): string[]</code></td>
+  <td><code>string[]</code></td>
+  <td>Gets number format category list.</td>
+</tr>
+<tr>
+  <td><code>getNumberFormatExample</code></td>
+  <td><code>(format: string, value?: unknown, lcid?: unknown): unknown</code></td>
+  <td><code>unknown</code></td>
+  <td>Gets a number format example.</td>
+</tr>
+<tr>
+  <td><code>getNumberFormatExamples</code></td>
+  <td><code>(formats: string[], value?: unknown, lcid?: unknown): unknown</code></td>
+  <td><code>unknown</code></td>
+  <td>Gets number format examples in batch.</td>
+</tr>
+<tr>
+  <td><code>isWorksheetProtected</code></td>
+  <td><code>(index?: number): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>Checks whether a worksheet is protected. If <code>index</code> is omitted, the active worksheet is checked.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Example:</p>
+<pre><code class="language-ts">app.Workbook.addWorksheet();
+app.Workbook.setWorksheetName(&quot;Summary&quot;);
+
+const name = app.Workbook.getWorksheetName();
+const protectedSheet = app.Workbook.isWorksheetProtected();
+
+const formats = app.Workbook.getCellNumberFormats();
+const examples = app.Workbook.getNumberFormatExamples([&quot;0.00&quot;, &quot;0%&quot;], 1234.56, &quot;en-US&quot;);
+</code></pre>
+<h2 id="worksheet">Worksheet<a class="heading-anchor" href="#worksheet" aria-label="Link to this heading">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Signature</th>
+  <th>Returns</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>isFrozenPane</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>Whether panes are currently frozen.</td>
+</tr>
+<tr>
+  <td><code>toggleFreezePanes</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Toggles freeze/unfreeze panes.</td>
+</tr>
+<tr>
+  <td><code>setRowHeight</code></td>
+  <td><code>(heightPt: number): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Sets current row height. Empty values are ignored.</td>
+</tr>
+<tr>
+  <td><code>insertRows</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Inserts rows.</td>
+</tr>
+<tr>
+  <td><code>hideRows</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Hides rows.</td>
+</tr>
+<tr>
+  <td><code>unhideRows</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Unhides rows.</td>
+</tr>
+<tr>
+  <td><code>deleteRows</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Deletes rows.</td>
+</tr>
+<tr>
+  <td><code>insertColumns</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Inserts columns.</td>
+</tr>
+<tr>
+  <td><code>setColumnWidth</code></td>
+  <td><code>(nChars: number): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets current column width in character width units. Empty values are ignored.</td>
+</tr>
+<tr>
+  <td><code>hideColumns</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Hides columns.</td>
+</tr>
+<tr>
+  <td><code>unhideColumns</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Unhides columns.</td>
+</tr>
+<tr>
+  <td><code>deleteColumns</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Deletes columns.</td>
+</tr>
+<tr>
+  <td><code>getRowHeight</code></td>
+  <td><code>(row?: number \| null, wsIdx?: number \| null): number</code></td>
+  <td><code>number</code></td>
+  <td>Gets row height. If omitted or <code>null</code>, the current context is used.</td>
+</tr>
+<tr>
+  <td><code>getColumnWidth</code></td>
+  <td><code>(col?: number \| null, wsIdx?: number \| null): number</code></td>
+  <td><code>number</code></td>
+  <td>Gets column width. If omitted or <code>null</code>, the current context is used.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Example:</p>
+<pre><code class="language-ts">if (!app.Worksheet.isFrozenPane()) {
+  app.Worksheet.toggleFreezePanes();
+}
+
+await app.Worksheet.setRowHeight(24);
+app.Worksheet.setColumnWidth(12);
+
+const rowHeight = app.Worksheet.getRowHeight();
+const colWidth = app.Worksheet.getColumnWidth();
+</code></pre>
+<h2 id="selection">Selection<a class="heading-anchor" href="#selection" aria-label="Link to this heading">#</a></h2>
+<p>Selection methods operate on the current active cell or selection.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Signature</th>
+  <th>Returns</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>clearContents</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Clears content in the current selection.</td>
+</tr>
+<tr>
+  <td><code>setAccountingFormat</code></td>
+  <td><code>(value: AccountingFormat): Promise&lt;unknown&gt; \| false</code></td>
+  <td><code>Promise&lt;unknown&gt; \| false</code></td>
+  <td>Sets accounting format. Invalid format values may return <code>false</code>.</td>
+</tr>
+<tr>
+  <td><code>setUnderline</code></td>
+  <td><code>(value: string): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets underline.</td>
+</tr>
+<tr>
+  <td><code>setBorder</code></td>
+  <td><code>(value: BorderValue): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets borders.</td>
+</tr>
+<tr>
+  <td><code>setStrikeThrough</code></td>
+  <td><code>(value: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets strikethrough.</td>
+</tr>
+<tr>
+  <td><code>setBold</code></td>
+  <td><code>(value: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets bold.</td>
+</tr>
+<tr>
+  <td><code>setItalic</code></td>
+  <td><code>(value: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets italic.</td>
+</tr>
+<tr>
+  <td><code>setFontSize</code></td>
+  <td><code>(value: string \| number): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets font size. Must satisfy <code>0 &lt; value &lt;= 409</code>.</td>
+</tr>
+<tr>
+  <td><code>setHorizontalAlignment</code></td>
+  <td><code>(value: string): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets horizontal alignment.</td>
+</tr>
+<tr>
+  <td><code>setVerticalAlignment</code></td>
+  <td><code>(value: string): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets vertical alignment.</td>
+</tr>
+<tr>
+  <td><code>setFontColor</code></td>
+  <td><code>(value: XlsxColor): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets font color.</td>
+</tr>
+<tr>
+  <td><code>setFillColor</code></td>
+  <td><code>(value: XlsxColor): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets fill color.</td>
+</tr>
+<tr>
+  <td><code>setFontName</code></td>
+  <td><code>(value: string): void</code></td>
+  <td><code>void</code></td>
+  <td>Sets font family.</td>
+</tr>
+<tr>
+  <td><code>setCellStyle</code></td>
+  <td><code>(value: string): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Sets cell style.</td>
+</tr>
+<tr>
+  <td><code>setPercentFormat</code></td>
+  <td><code>(): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Sets percent format.</td>
+</tr>
+<tr>
+  <td><code>setNumberFormat</code></td>
+  <td><code>(value: unknown): Promise&lt;unknown&gt;</code></td>
+  <td><code>Promise&lt;unknown&gt;</code></td>
+  <td>Sets number format.</td>
+</tr>
+<tr>
+  <td><code>increaseDecimalPlaces</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Increases decimal places.</td>
+</tr>
+<tr>
+  <td><code>decreaseDecimalPlaces</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Decreases decimal places.</td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-ts">type AccountingFormat = &quot;RMB&quot; | &quot;Dollar&quot; | &quot;EUR&quot; | &quot;GBP&quot; | &quot;JPY&quot; | &quot;none&quot;;
+
+type XlsxColor =
+  | { r: number; g: number; b: number }
+  | { theme: number; tint?: number }
+  | { indexed: number }
+  | { rgbHex: string };
+
+type BorderValue = {
+  color: XlsxColor;
+  position: string;
+  style: string;
+};
+</code></pre>
+<p><code>rgbHex</code> supports 6-digit <code>RRGGBB</code> or 8-digit <code>AARRGGBB</code>. The 8-digit form can carry alpha; the <code>{ r, g, b }</code> RGB object itself does not support transparency.</p>
+<p>While cell text is being edited, <code>setBold</code>, <code>setItalic</code>, <code>setUnderline</code>, and <code>setStrikeThrough</code> toggle the current state and ignore the supplied boolean value. <code>setHorizontalAlignment</code> and <code>setVerticalAlignment</code> currently have no effect in that editing state.</p>
+<p>Common enums:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Parameter</th>
+  <th>Common Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>setUnderline(value)</code></td>
+  <td><code>&quot;single&quot;</code>, <code>&quot;none&quot;</code></td>
+</tr>
+<tr>
+  <td><code>setHorizontalAlignment(value)</code></td>
+  <td><code>&quot;left&quot;</code>, <code>&quot;center&quot;</code>, <code>&quot;right&quot;</code>, <code>&quot;justify&quot;</code>, <code>&quot;distributed&quot;</code></td>
+</tr>
+<tr>
+  <td><code>setVerticalAlignment(value)</code></td>
+  <td><code>&quot;top&quot;</code>, <code>&quot;center&quot;</code>, <code>&quot;bottom&quot;</code></td>
+</tr>
+<tr>
+  <td><code>setAccountingFormat(value)</code></td>
+  <td><code>&quot;RMB&quot;</code>, <code>&quot;Dollar&quot;</code>, <code>&quot;EUR&quot;</code>, <code>&quot;GBP&quot;</code>, <code>&quot;JPY&quot;</code>, <code>&quot;none&quot;</code></td>
+</tr>
+<tr>
+  <td><code>BorderValue.position</code></td>
+  <td><code>&quot;all&quot;</code>, <code>&quot;none&quot;</code>, <code>&quot;inner&quot;</code>, <code>&quot;outer&quot;</code>, <code>&quot;left&quot;</code>, <code>&quot;right&quot;</code>, <code>&quot;top&quot;</code>, <code>&quot;bottom&quot;</code>, <code>&quot;verticalInner&quot;</code>, <code>&quot;horizontalInner&quot;</code>, <code>&quot;diagonalUp&quot;</code>, <code>&quot;diagonalDown&quot;</code></td>
+</tr>
+<tr>
+  <td><code>BorderValue.style</code></td>
+  <td><code>&quot;hair&quot;</code>, <code>&quot;dotted&quot;</code>, <code>&quot;dashed&quot;</code>, <code>&quot;thin&quot;</code>, <code>&quot;medium&quot;</code>, <code>&quot;thick&quot;</code>, <code>&quot;double&quot;</code>, <code>&quot;dashDot&quot;</code>, <code>&quot;dashDotDot&quot;</code>, <code>&quot;mediumDashed&quot;</code>, <code>&quot;mediumDashDot&quot;</code>, <code>&quot;mediumDashDotDot&quot;</code>, <code>&quot;slantDashDot&quot;</code>; when clearing borders, usually use <code>position: &quot;none&quot;</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Example:</p>
+<pre><code class="language-ts">app.Selection.clearContents();
+
+app.Selection.setFontName(&quot;Arial&quot;);
+app.Selection.setFontSize(12);
+app.Selection.setBold(true);
+await app.Selection.setAccountingFormat(&quot;RMB&quot;);
+app.Selection.setFontColor({ r: 192, g: 0, b: 0 });
+app.Selection.setFillColor({ r: 255, g: 242, b: 204 });
+
+app.Selection.setBorder({
+  color: { r: 0, g: 0, b: 0 },
+  position: &quot;all&quot;,
+  style: &quot;thin&quot;
+});
+
+await app.Selection.setNumberFormat(&quot;0.00&quot;);
+app.Selection.increaseDecimalPlaces();
+</code></pre>
+<p>Selection component events:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Event Name</th>
+  <th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>SELECTION_CHANGE</code></td>
+  <td><code>XlsxSelectionChange</code> or the raw event object</td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-ts">type XlsxSelectionChange = {
+  bold: boolean;
+  italic: boolean;
+  fontName: string;
+  fontSize: number | string;
+  fontColor: unknown;
+  underline: string;
+  strikeout: boolean;
+  fillColor: unknown;
+  alignHorizontal: string;
+  alignVertical: string;
+  numFormat: string;
+  numFormatType: string;
+  canCopy?: boolean;
+  bSelectAll?: boolean;
+  isText?: boolean;
+};
+</code></pre>
+<h2 id="finder">Finder<a class="heading-anchor" href="#finder" aria-label="Link to this heading">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Signature</th>
+  <th>Returns</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>search</code></td>
+  <td><code>(text: string, callback?: (...args: unknown[]) =&gt; void): void</code></td>
+  <td><code>void</code></td>
+  <td>Starts searching for a keyword. Optional callback supported.</td>
+</tr>
+<tr>
+  <td><code>selectFirst</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Moves to the first search result.</td>
+</tr>
+<tr>
+  <td><code>selectNext</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Moves to the next search result.</td>
+</tr>
+<tr>
+  <td><code>selectPrevious</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>Moves to the previous search result.</td>
+</tr>
+<tr>
+  <td><code>getSearchStatus</code></td>
+  <td><code>(): unknown</code></td>
+  <td><code>unknown</code></td>
+  <td>Gets search status.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Finder component events:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Event Name</th>
+  <th>Payload</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>XLSX_OPEN_FIND_UI</code></td>
+  <td>None</td>
+  <td>The document requests opening the find UI.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Example:</p>
+<pre><code class="language-ts">app.Finder.search(&quot;Q1&quot;);
+app.Finder.selectFirst();
+app.Finder.selectNext();
+
+console.log(app.Finder.getSearchStatus());
+</code></pre>
+<h2 id="cursor">Cursor<a class="heading-anchor" href="#cursor" aria-label="Link to this heading">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Signature</th>
+  <th>Returns</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>getTargetType</code></td>
+  <td><code>(): &quot;&quot; \| &quot;columnHeader&quot; \| &quot;rowHeader&quot; \| &quot;cells&quot; \| &quot;navBar&quot;</code></td>
+  <td><code>string</code></td>
+  <td>Gets the current mouse/cursor target area.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Return values:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Value</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>&quot;&quot;</code></td>
+  <td>No stable target currently.</td>
+</tr>
+<tr>
+  <td><code>&quot;cells&quot;</code></td>
+  <td>Cell area.</td>
+</tr>
+<tr>
+  <td><code>&quot;rowHeader&quot;</code></td>
+  <td>Row header.</td>
+</tr>
+<tr>
+  <td><code>&quot;columnHeader&quot;</code></td>
+  <td>Column header.</td>
+</tr>
+<tr>
+  <td><code>&quot;navBar&quot;</code></td>
+  <td>Bottom worksheet tab area.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Example:</p>
+<pre><code class="language-ts">const targetType = app.Cursor.getTargetType();
+if (targetType === &quot;cells&quot;) {
+  app.Selection.setBold(true);
+}
+</code></pre>
+<h2 id="undoredo">UndoRedo<a class="heading-anchor" href="#undoredo" aria-label="Link to this heading">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Signature</th>
+  <th>Returns</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>undo</code></td>
+  <td><code>(callback?: (value: unknown) =&gt; void): void</code></td>
+  <td><code>void</code></td>
+  <td>Undo. Optional callback supported.</td>
+</tr>
+<tr>
+  <td><code>redo</code></td>
+  <td><code>(callback?: (value: unknown) =&gt; void): void</code></td>
+  <td><code>void</code></td>
+  <td>Redo. Optional callback supported.</td>
+</tr>
+<tr>
+  <td><code>canUndo</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>Whether undo is available.</td>
+</tr>
+<tr>
+  <td><code>canRedo</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>Whether redo is available.</td>
+</tr>
+</tbody>
+</table></div>
+<p>UndoRedo component events:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Event Name</th>
+  <th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>UNDO_REDO_STATE_CHANGE</code></td>
+  <td>None</td>
+</tr>
+</tbody>
+</table></div>
+<p>Example:</p>
+<pre><code class="language-ts">if (app.UndoRedo.canRedo()) {
+  app.UndoRedo.redo();
+}
+</code></pre>
+
+      </article>
+    </main>
+    <aside class="toc"><div class="toc-card"><p class="toc-heading">On This Page</p><ul><li class="lvl-2"><a href="#components">Components</a></li>
+<li class="lvl-2"><a href="#quick-example">Quick Example</a></li>
+<li class="lvl-2"><a href="#document">Document</a></li>
+<li class="lvl-2"><a href="#workbook">Workbook</a></li>
+<li class="lvl-2"><a href="#worksheet">Worksheet</a></li>
+<li class="lvl-2"><a href="#selection">Selection</a></li>
+<li class="lvl-2"><a href="#finder">Finder</a></li>
+<li class="lvl-2"><a href="#cursor">Cursor</a></li>
+<li class="lvl-2"><a href="#undoredo">UndoRedo</a></li></ul></div></aside>
+  </div>
+  <script>window.STATIC_DOCS_SEARCH = [{"title":"Office SDK Developer Documentation","path":"index.html","href":"../index.html","text":"Office SDK Developer Documentation This documentation is for frontend developers integrating office sdk. It focuses on integrating and using the embedded browser Office component. Contents Overview Development Guide: Getting Started Development Guide: Package Structure Development Guide: Usage Guide Development Guide: CSP Deployment Guide API Reference: Overview API Reference: Common Conventions API Reference: DOCX API Reference: XLSX API Reference: PPTX Scope This documentation covers: Office SDK positioning and supported scenarios Basic browser integration Static lib package structure Deployment under enterprise CSP policies The openfile(...) open flow and createfile(...) creation flow The widget.close() instance lifecycle method Public API components and methods currently available for docx, xlsx, and pptx"},{"title":"Office SDK Overview","path":"product-overview/office-sdk-overview.html","href":"../product-overview/office-sdk-overview.html","text":"Office SDK Overview office sdk is an embeddable Office document component SDK for web pages. It loads and renders Office documents directly in the browser. Integrators can load the SDK in their own pages, choose a DOM container as the mount target, then open and render files through a unified API. Use Cases Office SDK is suitable for: Embedding an Office document preview area in a host application Opening a local file for viewing immediately after file selection Quickly embedding Word, Excel, and PowerPoint document components into existing pages Integrating a unified document viewing entry point into an existing frontend system Audience This documentation is intended for: Developers responsible for frontend page integration Project teams that need Office document capabilities in web applications Engineers responsible for customer delivery and static asset deployment Core Capabilities Office SDK currently provides these core capabilities: Open local Office files or files from browser accessible URLs Create new DOCX, XLSX, or PPTX files Detect the document type and load the matching component automatically Mount the document instance into a specified DOM node for rendering Destroy the instance and release resources when a page changes or a component is unmounted Control the top toolbar and bottom status bar with uiOptions Open documents in read only mode with mode.readOnly Specify the document language with mode.lang Expose a public application API object for further integration Supported File Types The main document opening flow currently supports: Word: .doc, .docx Excel: .xls, .xlsx PowerPoint: .pptx Integration Model Office SDK is integrated as an embedded static asset package. A typical flow is: 1. Obtain and deploy the office sdk/lib/ static asset directory 2. Load UI.js from the static path; the SDK automatically loads style.css 3. Optionally import preload.js to request key runtime assets ahead of time 4. Call openfile(...) to open a file, or createfile(...) to create one 5. Mount the returned widget to the target container and render it 6. Call close() when the instance is no longer needed Runtime Recommendations Use Office SDK in a modern web application that supports static asset deployment and ES Modules. Recommended environment: A modern browser, preferably the latest stable Chrome or Chromium Edge Frontend runtime support for ES Modules, dynamic import(), Web Workers, SharedWorkers, WebAssembly, IndexedDB, Promise, Blob, and ArrayBuffer A page application that can mount DOM nodes normally A static asset service that can deploy the complete office sdk/lib/ directory Browser Compatibility Office SDK should preferably run in the latest stable Chrome or Chromium Edge. Compatibility is capability based rather than determined only by a browser version: Runtime Guidance Chrome / Chromium Edge Primary supported environment. Use the latest stable release and verify SharedWorker, IndexedDB, and WebAssembly. Firefox / Safari Perform dedicated testing on the target version, especially for SharedWorker and IndexedDB under the active privacy policy. iOS Safari / iOS WKWebView Validate in the actual host container. WebView configuration, third party context, and storage policy may restrict SharedWorker or IndexedDB. Android WebView Validate the actual system WebView version and host configuration. Internet Explorer, legacy EdgeHTML Edge, Android Browser, and browsers or WebViews without ES Modules, dynamic import(), SharedWorker, IndexedDB, or WebAssembly are not supported. Private browsing, enterprise policy, or security containers may disable a capability even when its API is present. PDF Export Requirements Document.exportPdf(...) also requires a secure context (normally HTTPS or localhost), window.queryLocalFonts, and permission to access local fonts. If these requirements are not met, the current implementation does not perform the PDF export."},{"title":"Development Guide: Getting Started","path":"development-guide/getting-started.html","href":"../development-guide/getting-started.html","text":"Development Guide: Getting Started This guide explains how to integrate office sdk into a frontend page and complete the smallest working flow for opening and rendering a document. Check the Environment First confirm that the integrating page runs in a browser environment that supports ES Modules, dynamic import(), Web Workers, SharedWorkers, WebAssembly, IndexedDB, Promise, Blob, and ArrayBuffer. SharedWorker and IndexedDB are required by the current open flow. In addition to checking that the APIs exist, verify that private browsing, enterprise policy, third party context restrictions, or WebView configuration does not disable them. See Office SDK Overview for compatibility guidance. Step 1: Deploy the Static Asset Package Deploy the complete lib/ directory from the release package to your static asset location. A recommended mapping is: Keep the complete directory structure during deployment. Do not copy only a single entry file. Example paths after deployment: Step 2: Prepare a Mount Container Prepare a container node in the page to host the Office document component. Give the mount container an explicit width and height. Otherwise the document area may not display as expected. Step 3: Preload When Needed When UI.js is loaded, the SDK automatically inserts /office sdk/style.css. In most integrations, you do not need to add the stylesheet manually. If you want the stylesheet to start downloading earlier and reduce the first render wait, you can still declare it in the page head: If the page is likely to open a document immediately, import preload.js to request key JavaScript runtime files, worker entries, and document app modules ahead of time: In Vite, Webpack, or another frontend project, you can also preload dynamically at runtime: preload.js does not preload every .wasm binary or all deployed locale files; those resources may still load on demand when the first document opens. It requests multiple runtime resources, so it is best suited to document detail pages, preview pages, or when the user is about to open a document. On ordinary list pages, trigger it on demand instead of loading it unconditionally. Step 4: Load the SDK Entry UI.js is a standard ES Module file. Choose one of the following approaches based on your integration environment. Option 1: Static Import in a Native ESM Page If the page itself runs in a native browser type=\"module\" environment, import it directly: Option 2: Runtime Dynamic Import in an Existing Frontend Project When integrating into an existing Vite, Webpack, or similar project, runtime dynamic loading is usually preferred. This prevents the build tool from taking over parsing and bundling /office sdk/UI.js at compile time. Example: If your project environment explicitly supports direct module imports by URL, you can also use: Step 5: Open and Render a File The following example shows the smallest working integration flow. Close the old instance before page changes, component unmount, or opening another file: close() closes the current document instance, unmounts the component, and releases SDK internal resources. Call it from the host component's unmount hook or before opening a new file. To control SDK display state, pass an options object as the second argument: showTopBar Shows or hides the top toolbar. If omitted, the SDK default layout is used. showBottomBar Shows or hides the bottom status bar. If omitted, the SDK default layout is used. mode.readOnly Opens the document in read only mode when set to true. mode.lang Specifies the language used when opening the document, such as zh CN or en US. To pass user information at the same time: FAQ 1. Why does it say the mount node cannot be found? widget.mount(...) accepts an HTMLElement or a string. Strings beginning with , ., or are treated as CSS selectors; other strings are treated as DOM element IDs. Check that: The selector exists in the current page The page DOM has finished rendering when you call it The mount container has not been hi"},{"title":"Development Guide: Package Structure","path":"development-guide/package-structure.html","href":"../development-guide/package-structure.html","text":"Development Guide: Package Structure This document describes the static lib release package structure for office sdk and explains the role of each directory and file during integration. Directory Structure lib/ is the static asset directory used at deployment time. A typical structure is: Entry Files UI.js Main public entry. Use it to call openfile(...) or createfile(...). preload.js Optional preload entry. Importing it requests key JavaScript runtime files, worker entries, and document app modules to reduce part of the first open loading latency. It does not preload every .wasm binary or all deployed locale files. style.css SDK page styles. The integrating page must load it explicitly. UI.d.ts TypeScript declaration file. It provides type hints in TypeScript projects and is not loaded by the browser. It includes public types such as OfficeSdkOpenOptions, OfficeSdkUiOptions, and OfficeSdkOpenMode. Runtime Core Files office.core.js Office core runtime code. office.locale.js Runtime code related to language and localization. worker/ Worker runtime resource directory. Document loading depends on scripts and wasm/ resources in this directory. locale assets/ Multilingual resource directory. Language resources are under locale assets/deploy/i18n/. vendor/ Third party scripts required by the runtime. Split Runtime Modules The following files are split runtime modules of the SDK: UI.runtime.js ApiBase.js index browser.js compat globals.js mountDocxApp.js mountXlsxApp.js mountPptxApp.js DropdownPopoverList.js You do not need to import these files manually, but they must remain deployed together with the rest of the assets. Otherwise UI.js may fail to load runtime dependencies by relative path. Supporting Files manifest.json Release manifest. It can be used to inspect asset integrity and entry mappings. package.json Metadata for the static asset package, including package name, version, entries, type declarations, and style entry. It is used for delivery identification and tooling. Deployment Recommendations Keep the complete directory structure when deploying. Avoid: Copying only UI.js Changing the relative locations of worker/, locale assets/, or vendor/ Manually deleting runtime modules that do not appear to be directly referenced Map the complete lib/ directory to one static path, for example:"},{"title":"Development Guide: Usage Guide","path":"development-guide/usage-guide.html","href":"../development-guide/usage-guide.html","text":"Development Guide: Usage Guide This guide describes the standard office sdk open flow, parameters, return values, and instance lifecycle. For component level APIs, see the API Reference. Basic Flow The example below assumes a native browser ESM page, or that /office sdk/UI.js has already been dynamically loaded as described in Getting Started. When integrating with a Vite, Webpack, or similar application project, use the runtime dynamic import pattern from the getting started guide. openfile Signature To create a blank document, call OfficeSdk.createfile(1 2 3, options), where 1, 2, and 3 represent DOCX, XLSX, and PPTX. Its return value and widget lifecycle match openfile(...). fileData Parameter Field Required Description docId No Document ID used for caching and instance lifecycle identification. If omitted, the SDK generates one from file information. fileName Yes File name. The extension is used to identify the document type. openfile(...) currently supports doc, docx, xls, xlsx, and pptx. file Yes File content or a browser accessible file URL. Supports File/Blob, ArrayBuffer, TypedArray, plus blob:, data:, http(s):, file:, absolute paths beginning with /, and relative paths beginning with ./ or ../. A plain string such as files/a.docx is not recognized as a URL. Do not pass null or undefined. options Parameter Field Description userData Current user information. If omitted, a default user is filled in: nickName: \"Local User\", avatar: \"\", and opts.color: \" 2F80ED\". uiOptions.showTopBar Whether to show the top toolbar. If omitted, the SDK default layout is used. uiOptions.showBottomBar Whether to show the bottom status bar. If omitted, the SDK default layout is used. mode.readOnly Whether to open in read only mode. mode.lang Document language, such as zh CN or en US. If omitted, the SDK falls back to window.lang, <html lang , and then browser language. Return Value docType values: Value Type 1 Word / DOCX 2 Excel / XLSX 3 PowerPoint / PPTX widget.mount(target) accepts HTMLElement and strings. Strings beginning with , ., or are treated as CSS selectors; other strings are treated as DOM element IDs: widget.render() waits until the document is ready and returns the public app API object. You can then call: widget.docTypeName is usually \"WORD\", \"EXCEL\", or \"PPT\" after mounting; it may be null before mount completes. Instance Lifecycle widget.close() closes the current document instance and releases runtime resources. Method Description Recommended Timing close() Closes the current widget and releases the document instance, internal event listeners, and mount resources. Call before page unload, before the host component unmounts, or before opening another file. Call it: Before route changes or before the host component unmounts Before the user selects and opens a new file When the current document viewer is no longer needed Example: URL File Example Reopening Files Destroy the old instance before reopening: Event Example Events are registered through component level addEventListener. Choose the component by event ownership: document loading, export, and zoom events belong to Document; selection events belong to Selection; undo/redo events belong to UndoRedo. Supported event names and payloads for each document type are listed in the [API Reference."},{"title":"Development Guide: CSP Deployment Guide","path":"development-guide/csp.html","href":"../development-guide/csp.html","text":"Development Guide: CSP Deployment Guide This guide is for integrating office sdk behind enterprise intranets, portal systems, or security gateways. It describes the minimum deployment requirements and common adjustments under Content Security Policy. Use Cases If the integrating page uses CSP, confirm before release that the SDK static asset directory, document file sources, and page script policy are all allowlisted. The SDK loads ES Modules, styles, Workers, SharedWorkers, WebAssembly, images, fonts, and other resources. An overly narrow CSP can cause documents to fail to open or render a blank area. Recommended Starting Policy The policy below assumes: The complete SDK lib/ directory is deployed on the same origin as the integrating page, for example /office sdk/ Document files are loaded from the same origin or from explicitly allowlisted file hosting domains The integrating page loads the SDK through an external type=\"module\" script or dynamic import(), and does not rely on inline script Replace https://<file host with the actual domain for document files, images, or authentication APIs. If all files are same origin, you can remove the placeholder domain. Directive Notes Directive Usually Required Description script src 'self' Yes Allows loading UI.js, preload.js, split runtime modules, and wasm JS glue files. 'wasm unsafe eval' Yes Allows the browser to compile and instantiate WebAssembly. 'unsafe eval' Compatibility Used for compatibility with browsers or security policies that classify WebAssembly runtime differently. If enterprise security rules disallow it, validate CSP in target browsers first. script src elem 'self' Recommended If the enterprise policy explicitly sets script src elem, same origin module scripts must be allowed. worker src 'self' Yes The SDK loads module Workers and SharedWorkers from the static worker/ directory by default. child src 'self' Recommended Fallback for some older browsers or CSP implementations that apply child src to Workers. style src 'self' 'unsafe inline' Yes The SDK loads style.css, and runtime components write necessary inline styles. font src 'self' data: Recommended Allows SDK and document rendering fonts, including embedded font data. img src 'self' data: blob: Yes Document images, previews, exported images, and temporary object URLs may use data: or blob:. connect src Application specific Add the corresponding domains when opening remote document URLs, requesting authentication APIs, or loading cross origin resources. object src 'none' Recommended The SDK does not depend on <object ; disabling it is recommended. base uri 'self' Recommended Limits the risk of injected <base tags. When blob: Is Needed The SDK uses static Worker URLs by default, so worker src 'self' is enough for the basic configuration. Add blob: to worker src and child src only when: The integrator rewrites Worker URLs to blob: URLs The host page or micro frontend framework wraps Workers as Blob Workers An enterprise proxy or security container requires Worker scripts to be injected through Blob URLs Example: Inline Script Recommendations The SDK itself does not require script src 'unsafe inline'. If the integrating page needs inline bootstrap script, prefer nonce or hash: Example page script: If enterprise security rules forbid inline script, put the integration code in a separate .js file and load it as a same origin module script. Cross Origin Deployment Notes The current SDK creates its SharedWorker directly with new SharedWorker(workerUrl). SharedWorkers apply strict same origin rules to their script URL, so CSP and CORS configuration alone cannot guarantee that the complete SDK will run cross origin. Recommended deployment: Deploy the complete lib/ directory on the same origin as the host page Or reverse proxy the SDK assets through the host origin so /office sdk/worker/ appears same origin to the page Keep the complete worker/, worker/wasm/, locale assets/, and vendor/ directory structure Serve .wasm fi"},{"title":"API Reference","path":"api-reference/index.html","href":"index.html","text":"API Reference This reference documents the current public APIs exposed by office sdk for browser integration: Parameters, return values, and lifecycle for OfficeSdk.openfile(...) and OfficeSdk.createfile(...) Public app components returned by widget.render() Methods, parameters, return values, events, and examples for docx, xlsx, and pptx Reading Order 1. Start with Common API Conventions to understand openfile(...), createfile(...), widget.mount(...).render(), the event model, and color parameters. 2. Then read the document type pages: DOCX API, XLSX API, and PPTX API. Component Scope Type Public Components DOCX Document, Paragraph, Table, Selection, Finder, UndoRedo XLSX Document, Workbook, Worksheet, Selection, Finder, Cursor, UndoRedo PPTX Document, Paragraph, TextBox, Player, Selection, Viewer, UndoRedo Basic Example Events are registered through component level addEventListener. Choose the component by event ownership. For example, selection events belong to Selection, undo/redo events belong to UndoRedo, and document loading or export events belong to Document: Contents Common API Conventions DOCX API XLSX API PPTX API"},{"title":"Common API Conventions","path":"api-reference/common.html","href":"common.html","text":"Common API Conventions This document describes the office sdk entry points, instance lifecycle, common types, event model, and color parameters. Product specific component methods are documented in DOCX, XLSX, and PPTX. Entry Points Public entries live in the deployed static asset directory. The examples below assume lib/ is mapped to /office sdk/: UI.js automatically loads style.css from the same directory. If you want the stylesheet to download earlier, you can still add <link rel=\"stylesheet\" href=\"/office sdk/style.css\" / in the page head. preload is an optional entry that requests key JavaScript runtime files, worker entries, and document app modules ahead of time. It does not preload every .wasm binary or all deployed locale files; those resources may still load on demand when the first document opens. Use it when the page will open a document immediately. On ordinary list pages, defer loading until the user initiates opening a document. Runtime Prerequisites Opening a document requires: ES Modules and dynamic import() Web Workers, SharedWorkers, and WebAssembly IndexedDB Promise, Blob, and ArrayBuffer SharedWorker and IndexedDB are required by the current open flow. If either is unavailable, render() may fail. Also verify that browser privacy settings, private browsing, enterprise policy, or the host WebView does not disable these capabilities. The SDK creates its worker directly with new SharedWorker(workerUrl), so deploy the complete lib/ directory on the same origin as the host page. CORS alone does not guarantee that a cross origin SharedWorker can be created. See the CSP Deployment Guide. openfile Signature: Minimal example: With user data, UI options, and open mode: createfile Create a new Office file: Parameters: Parameter Type Required Description docType OfficeWidgetCreateDocType Yes Identifies the type of Office document to create. options OfficeSdkOpenOptions \\ null No Creation options including user information, UI configuration, language, and read only mode. Document type identifiers: Identifier Document category File format Extension 1 Word document Office Open XML Wordprocessing Document .docx 2 Excel workbook Office Open XML Spreadsheet .xlsx 3 PowerPoint presentation Office Open XML Presentation .pptx Each call gets an independent docId. The options, return value, and widget lifecycle are the same as openfile(...). fileData Field Required Description docId No Document ID used for caching and instance lifecycle identification. If omitted, the SDK generates one from file information. fileName Yes File name. The extension identifies the document type. openfile(...) currently supports doc, docx, xls, xlsx, and pptx. file Yes File content or a browser accessible file URL. Supports File/Blob, ArrayBuffer, TypedArray, plus blob:, data:, http(s):, file:, absolute paths beginning with /, and relative paths beginning with ./ or ../. A plain string such as files/a.docx is not recognized as a URL. Do not pass null or undefined. URL example: options Field Description userData Current user information. If omitted, a default user is filled in: nickName: \"Local User\", avatar: \"\", and opts.color: \" 2F80ED\". uiOptions.showTopBar Whether to show the top toolbar. If omitted, the SDK default layout is used. uiOptions.showBottomBar Whether to show the bottom status bar. If omitted, the SDK default layout is used. mode.readOnly Whether to open in read only mode. When true, the SDK sets read only state after the document loads. mode.lang Language, such as zh CN or en US. If omitted, the SDK falls back to window.lang, <html lang , and then browser language. Return Value docType values: Value Type 1 Word / DOCX 2 Excel / XLSX 3 PowerPoint / PPTX widget.mount(target) supports: Strings beginning with , ., or [ are treated as CSS selectors. Other strings are treated as DOM element IDs. Do not pass selectors that begin with a tag name or a compound prefix, such as \"main .office container\". widget.render() waits until the document is"},{"title":"DOCX API","path":"api-reference/docx.html","href":"docx.html","text":"DOCX API DOCX APIs are called through the app returned by widget.render(): Components Component Description Document Export, zoom, page view, page navigation, page setup, copy/cut/paste, paragraph marks, page break display, and section break display Paragraph Font, text style, paragraph alignment, line spacing, bullets, and numbering Table Table insertion, deletion, row/column operations, merge, and unmerge Selection Selection, cursor, break insertion, and selection change events Finder Search, previous/next result, and search status UndoRedo Undo, redo, and availability state Quick Example Event example: Document Method Signature Returns Description exportDocument (): Promise<void Promise<void Exports the original document. exportPdf (printOptions?: unknown): Promise<void Promise<void Exports PDF with print options. setZoom (value: number): void void Sets zoom percentage. Common values include 80, 100, and 120. getZoom (): number number Gets the current zoom percentage. focusEditor (): void void Moves focus back to the editor area. updateVisibleArea (): void void Recalculates the visible area. setPageView (mode: \"single\" \\ \"multi\" \\ \"wide\"): void void Switches between single page, multi page, and page width views. goToPage (pageNum: number): void void Goes to a page. pageNum starts from 1. getCurrentPagePosition (pageIndex?: number): PagePosition \\ {} PagePosition \\ {} Gets page information. pageIndex is zero based; if omitted, the current page is used. The current implementation does not reliably distinguish an explicit 0 from an omitted value. setPageOrientation (value: \"Portrait\" \\ \"Landscape\"): void void Sets portrait or landscape orientation. Only exact \"Portrait\" and \"Landscape\" values are supported. setPageSize (width: number, height: number): void void Sets page width and height in centimeters. width and height must be finite positive numbers. copy (): Promise<void Promise<void Triggers copy in the editor area. cut (): Promise<void Promise<void Triggers cut in the editor area. paste (): Promise<void Promise<void Triggers paste in the editor area. startReadOnly (): void void Enters read only state. endReadOnly (): void void Exits read only state. isReadOnly (): boolean boolean Gets the current read only state. setShowParagraphMarks (value: boolean): void void Sets whether paragraph marks are visible. getShowParagraphMarks (): boolean boolean Gets paragraph mark visibility. setShowPageBreak (value: boolean): void void Sets whether page break marks are visible. getShowPageBreak (): boolean boolean Gets page break mark visibility. setShowSectionBreak (value: boolean): void void Sets whether section break marks are visible. getShowSectionBreak (): boolean boolean Gets section break mark visibility. PagePosition: Document example: Page setup parameter notes: setPageOrientation(...) does not accept empty strings, custom strings, or aliases. Passing unsupported values is undefined behavior. setPageSize(...) does not normalize 0, negative values, empty arguments, or extremely small page sizes. Validate values before calling this API. Document component events: Event Name Payload Description DOCX PAGE POSITION CHANGE None Current page position changed. DOCX FIRST PART LOADING (isLoading: boolean) First batch page loading state. DOCX END LOADING (count: number) All pages finished loading. DOCUMENT EXPORT READY None Export completed. DOCX ZOOM CHANGE None Zoom changed. DOCX PART LOADING (pageIndex: number, ratio: number) Chunk loading progress. ratio is usually 0 to 1. exportPdf(...) requires a secure context (normally HTTPS or localhost), window.queryLocalFonts, and permission to access local fonts. If these requirements are not met, the current implementation does not perform the PDF export. Paragraph Method Signature Returns Description setBold (value?: boolean): void void Sets or toggles bold. If omitted, toggles based on the current selection state. setItalic (value?: boolean): void void Sets or toggles italic. If omitted, t"},{"title":"XLSX API","path":"api-reference/xlsx.html","href":"xlsx.html","text":"XLSX API XLSX APIs are called through the app returned by widget.render(): Components Component Description Document Export, zoom, editing state, and loading events Workbook Worksheets, palette, number formats, and protection state Worksheet Rows, columns, freeze panes, row height, and column width Selection Current selection content, font, borders, fill, alignment, and number format Finder Search, previous/next result, and search status Cursor Current mouse/cursor target area UndoRedo Undo, redo, and availability state Quick Example Event example: Document Method Signature Returns Description isEditing (): boolean boolean Whether a cell is currently being edited. setZoom (value: number, redraw?: boolean): boolean boolean Sets zoom percentage. redraw defaults to true; returns the underlying zoom operation result. getZoom (): number number Gets zoom percentage. focusEditor (): void void Currently a no op in the XLSX implementation. updateVisibleArea (): void void Redraws the visible area of the current active worksheet. exportDocument (): Promise<void Promise<void Exports the original workbook. exportPdf (printOptions?: unknown): Promise<void Promise<void Exports PDF with print options. copy (): Promise<void Promise<void Copies the current selection. cut (): Promise<void Promise<void Cuts the current selection. paste (): Promise<void Promise<void Pastes into the current selection. startReadOnly (): void void Enters read only state. endReadOnly (): void void Exits read only state. isReadOnly (): boolean boolean Gets the current read only state. Example: Clipboard notes: copy(), cut(), and paste() depend on the browser Clipboard API, a secure context, and user permission. Some browsers do not allow writing the editor's custom MIME type to the system clipboard. In that case a NotAllowedError may be thrown, but the document remains editable. Catch the error and guide users to use the system shortcut. Document component events: Event Name Payload Description XLSX WORKSHEET LOADED None Worksheet loaded. XLSX END LOADING None Document loading completed. DOCUMENT EXPORT READY None Export completed. XLSX EDITING STATUS CHANGE (status: boolean) Cell editing state changed. XLSX ZOOM CHANGE None Zoom changed. XLSX WORKSHEET LOADING RATIO (ratio: number) Worksheet loading progress. XLSX FIRST PART LOADING None First batch content loaded. XLSX WORKSHEET CHANGE ({ sheetProtected?: boolean }) Current worksheet changed. exportPdf(...) requires a secure context (normally HTTPS or localhost), window.queryLocalFonts, and permission to access local fonts. If these requirements are not met, the current implementation does not perform the PDF export. Workbook Method Signature Returns Description addWorksheet (): void void Adds a worksheet. setWorksheetName (name: string, index?: number): boolean \\ number boolean \\ number Sets worksheet name. If index is omitted, the active worksheet is used. Returns success or a name validation status code. deleteWorksheet (index?: number): void void Deletes a worksheet. If index is omitted, the active worksheet is deleted. getWorksheetName (index?: number): string string Gets worksheet name. If index is omitted, the active worksheet is read. getColorPalette (): { theme: unknown[]; standard: unknown[] } { theme; standard } Gets the color palette. getCellNumberFormats (): string[] string[] Gets number format category list. getNumberFormatExample (format: string, value?: unknown, lcid?: unknown): unknown unknown Gets a number format example. getNumberFormatExamples (formats: string[], value?: unknown, lcid?: unknown): unknown unknown Gets number format examples in batch. isWorksheetProtected (index?: number): boolean boolean Checks whether a worksheet is protected. If index is omitted, the active worksheet is checked. Example: Worksheet Method Signature Returns Description isFrozenPane (): boolean boolean Whether panes are currently frozen. toggleFreezePanes (): void void Toggles freeze/unfreeze panes. setRowHeight (he"},{"title":"PPTX API","path":"api-reference/pptx.html","href":"pptx.html","text":"PPTX API PPTX APIs are called through the app returned by widget.render(): Components Component Description Document Page number, zoom, layout, export, and read only state Paragraph Text font, color, size, bold, italic, underline, strikethrough, and horizontal paragraph alignment TextBox Text box vertical alignment Player Start playback, navigate within the current slide show, and full screen playback Selection Selection type, text style queries, and selection change events Viewer Current active target in the thumbnail area UndoRedo Undo, redo, and availability state Quick Example Event example: Document Method Signature Returns Description getSlideInfo (): { total: number; current: number } { total; current } Gets total slide count and current slide. Page numbers start from 1. getCurrentSlideIndex (): number number Gets current page number. Page numbers start from 1. getSlideCount (): number number Gets total slide count. getZoom (): number number Gets zoom percentage. setZoom (value: number): void void Sets zoom percentage. Common values include 80, 100, and 120. autoZoom (): void void Adjusts the zoom automatically. focusEditor (): void void Currently a no op in the PPTX implementation. updateVisibleArea (): void void Recalculates the visible area. goToSlide (slideNum: number): void void Goes to a slide. slideNum starts from 1. deleteSlides (slides?: number[]): void void Deletes specified slide indexes. If omitted, deletes the currently selected slide. slides uses zero based indexes. addSlide (layout?: SlideLayoutRef, position?: number): void void Inserts a new slide. layout uses layout indexes, and position is the zero based insert position. If layout is omitted, the layout near the current selection is reused. getSlideLayouts (force?: boolean): SlideLayoutItem[][] SlideLayoutItem[][] Gets layouts grouped by slide master. When force = true, refreshes the cache. exportDocument (): Promise<void Promise<void Exports the original PPTX file. copy (): Promise<void Promise<void Copies the current selection. cut (): Promise<void Promise<void Cuts the current selection. paste (): Promise<void Promise<void Pastes into the current selection. getColorPalette (): { theme: unknown[]; standard: unknown[] } { theme; standard } Gets theme colors and standard colors. startReadOnly (): void void Enters read only state. endReadOnly (): void void Exits read only state. isReadOnly (): boolean boolean Whether the current state is read only. isDisable (): boolean boolean Whether the current editor is disabled. goToSlide(slideNum) uses display page numbers starting from 1; deleteSlides(slides) and addSlide(layout, position) use zero based underlying indexes. Document example: Document component events: Event Name Payload Description DOCUMENT READY Raw event parameters Document ready. DOCUMENT EXPORT READY Raw event parameters Export completed. PPTX SLIDES CHANGED (currentPage: number, totalPages: number) Current page or page count changed. PPTX ZOOM CHANGE (zoom: number) Zoom changed. PPTX FIRST PAGE LOADED None First page loaded. PPTX START LOADING None Loading started. Paragraph Method Signature Returns Description setFontName (value: string): void void Sets font family. setFontColor (value: string \\ { hex: string; [key: string]: unknown }): void void Sets font color. Object values must include hex; new integrations should use the { hex: \" RRGGBB\" } object form. setFontSize (value: number \\ string): void void Sets font size. setBold (value: boolean): void void Sets bold. setItalic (value: boolean): void void Sets italic. setUnderline (value: boolean): void void Sets underline. setStrikeThrough (value: boolean): void void Sets strikethrough. setAlignment (value: 0 \\ 1 \\ 2 \\ 3 \\ 4): void void Sets horizontal paragraph alignment. decreaseFontSize (): void void Decreases font size. increaseFontSize (): void void Increases font size. setAlignment(value) enum: Value Description 0 Right 1 Left 2 Center 3 Justified 4 Distributed Paragraph example: PPTX "}];</script>
+  <script>window.STATIC_DOCS_I18N = {"searchPrompt":"Type to search documentation...","searchNoResults":"No matches found"};</script>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

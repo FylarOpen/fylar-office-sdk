@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="os">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DOCX API · Office SDK 开发者文档</title>
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <button id="menu-btn" class="menu-btn" type="button">目录</button>
+    <a class="brand" href="../index.html"><span>Office SDK 开发者文档</span></a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索文档…" autocomplete="off">
+      <ul id="search-results" class="search-results"></ul>
+    </div>
+    <nav class="language-switch" aria-label="Language">
+<a class="language-link current" href="docx.html">简体中文</a>
+<a class="language-link" href="../../en-US/api-reference/docx.html">English</a>
+</nav>
+    <select id="theme-select" class="theme-select" aria-label="显示设置">
+      <option value="os">跟随系统</option>
+      <option value="light">浅色</option>
+      <option value="dark">深色</option>
+    </select>
+  </header>
+  <div class="shell">
+    <aside class="sidebar"><div class="nav-card">
+<p class="nav-heading">文档目录</p>
+<a class="nav-home" href="../index.html">Office SDK 开发者文档</a>
+<div class="nav-group">
+<div class="nav-group-title">产品概览</div>
+<ul class="nav-list">
+<li><a class="" href="../product-overview/office-sdk-overview.html">Office SDK 概述</a></li>
+</ul></div>
+<div class="nav-group">
+<div class="nav-group-title">开发指南</div>
+<ul class="nav-list">
+<li><a class="" href="../development-guide/getting-started.html">开发指南：入门指南</a></li>
+<li><a class="" href="../development-guide/package-structure.html">开发指南：包结构</a></li>
+<li><a class="" href="../development-guide/usage-guide.html">开发指南：使用指南</a></li>
+<li><a class="" href="../development-guide/csp.html">开发指南：CSP 部署指南</a></li>
+</ul></div>
+<div class="nav-group">
+<div class="nav-group-title"><a class="" href="index.html">API Reference</a></div>
+<ul class="nav-list">
+<li><a class="" href="common.html">公共 API 约定</a></li>
+<li><a class="current" href="docx.html">DOCX API</a></li>
+<li><a class="" href="xlsx.html">XLSX API</a></li>
+<li><a class="" href="pptx.html">PPTX API</a></li>
+</ul></div>
+</div></aside>
+    <main class="content-card">
+      <div class="breadcrumb"><a href="../index.html">Office SDK 开发者文档</a> <span>/</span> API Reference</div>
+      <h1 class="page-title">DOCX API</h1>
+      <article class="doc-content">
+<p>DOCX API 通过 <code>widget.render()</code> 返回的 <code>app</code> 调用：</p>
+<pre><code class="language-ts">const { widget } = await OfficeSdk.openfile({ docId: &quot;demo-docx&quot;, fileName: &quot;demo.docx&quot;, file });
+const app = await widget.mount(&quot;#office-container&quot;).render();
+</code></pre>
+<h2 id="组件">组件<a class="heading-anchor" href="#组件" aria-label="定位到此标题">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>Component</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Document</code></td>
+  <td>导出、缩放、分页视图、页码跳转、页面设置、复制剪切粘贴、段落标记、分页符和分节符显示</td>
+</tr>
+<tr>
+  <td><code>Paragraph</code></td>
+  <td>字体、文字样式、段落对齐、行距、项目符号和编号</td>
+</tr>
+<tr>
+  <td><code>Table</code></td>
+  <td>表格插入、删除、行列操作、合并与取消合并</td>
+</tr>
+<tr>
+  <td><code>Selection</code></td>
+  <td>选区、光标、分隔符插入、选区变化事件</td>
+</tr>
+<tr>
+  <td><code>Finder</code></td>
+  <td>查找、上一个/下一个结果、查找状态</td>
+</tr>
+<tr>
+  <td><code>UndoRedo</code></td>
+  <td>撤销、重做和可用状态</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="快速示例">快速示例<a class="heading-anchor" href="#快速示例" aria-label="定位到此标题">#</a></h2>
+<pre><code class="language-ts">app.Document.setZoom(120);
+app.Paragraph.setFontName(&quot;Arial&quot;);
+app.Paragraph.setFontSize(14);
+app.Paragraph.setFontColor({ r: 68, g: 114, b: 196 });
+
+if (app.Table.isInTable()) {
+  app.Table.addRows(&quot;End&quot;, 1);
+}
+
+app.Finder.search(&quot;合同&quot;);
+app.Finder.selectNext();
+</code></pre>
+<p>事件示例：</p>
+<pre><code class="language-ts">function onSelectionChange(info) {
+  console.log(&quot;selection&quot;, info);
+}
+
+app.Selection.addEventListener(&quot;SELECTION_CHANGE&quot;, onSelectionChange);
+app.Selection.removeEventListener(&quot;SELECTION_CHANGE&quot;, onSelectionChange);
+</code></pre>
+<h2 id="document">Document<a class="heading-anchor" href="#document" aria-label="定位到此标题">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>方法</th>
+  <th>签名</th>
+  <th>返回</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>exportDocument</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>导出原始文档。</td>
+</tr>
+<tr>
+  <td><code>exportPdf</code></td>
+  <td><code>(printOptions?: unknown): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>按打印配置导出 PDF。</td>
+</tr>
+<tr>
+  <td><code>setZoom</code></td>
+  <td><code>(value: number): void</code></td>
+  <td><code>void</code></td>
+  <td>设置缩放比例，常用值如 <code>80</code>、<code>100</code>、<code>120</code>。</td>
+</tr>
+<tr>
+  <td><code>getZoom</code></td>
+  <td><code>(): number</code></td>
+  <td><code>number</code></td>
+  <td>获取当前缩放比例。</td>
+</tr>
+<tr>
+  <td><code>focusEditor</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>将焦点切回编辑区。</td>
+</tr>
+<tr>
+  <td><code>updateVisibleArea</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>重新计算可视区域。</td>
+</tr>
+<tr>
+  <td><code>setPageView</code></td>
+  <td><code>(mode: &quot;single&quot; \| &quot;multi&quot; \| &quot;wide&quot;): void</code></td>
+  <td><code>void</code></td>
+  <td>切换单页、多页、页宽视图。</td>
+</tr>
+<tr>
+  <td><code>goToPage</code></td>
+  <td><code>(pageNum: number): void</code></td>
+  <td><code>void</code></td>
+  <td>跳转到页码，<code>pageNum</code> 从 <code>1</code> 开始。</td>
+</tr>
+<tr>
+  <td><code>getCurrentPagePosition</code></td>
+  <td><code>(pageIndex?: number): PagePosition \| {}</code></td>
+  <td><code>PagePosition \| {}</code></td>
+  <td>获取页码信息；<code>pageIndex</code> 为页索引，从 <code>0</code> 开始，不传取当前页。当前实现不会稳定区分显式传入的 <code>0</code> 与未传值。</td>
+</tr>
+<tr>
+  <td><code>setPageOrientation</code></td>
+  <td><code>(value: &quot;Portrait&quot; \| &quot;Landscape&quot;): void</code></td>
+  <td><code>void</code></td>
+  <td>设置页面纵向或横向；只支持精确传入 <code>&quot;Portrait&quot;</code> 或 <code>&quot;Landscape&quot;</code>。</td>
+</tr>
+<tr>
+  <td><code>setPageSize</code></td>
+  <td><code>(width: number, height: number): void</code></td>
+  <td><code>void</code></td>
+  <td>设置页面宽高，单位为厘米；<code>width</code>、<code>height</code> 必须是有限正数。</td>
+</tr>
+<tr>
+  <td><code>copy</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>触发编辑区复制。</td>
+</tr>
+<tr>
+  <td><code>cut</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>触发编辑区剪切。</td>
+</tr>
+<tr>
+  <td><code>paste</code></td>
+  <td><code>(): Promise&lt;void&gt;</code></td>
+  <td><code>Promise&lt;void&gt;</code></td>
+  <td>触发编辑区粘贴。</td>
+</tr>
+<tr>
+  <td><code>startReadOnly</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>进入只读状态。</td>
+</tr>
+<tr>
+  <td><code>endReadOnly</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>退出只读状态。</td>
+</tr>
+<tr>
+  <td><code>isReadOnly</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>获取当前只读状态。</td>
+</tr>
+<tr>
+  <td><code>setShowParagraphMarks</code></td>
+  <td><code>(value: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>设置是否显示段落换行标记。</td>
+</tr>
+<tr>
+  <td><code>getShowParagraphMarks</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>获取段落换行标记显示状态。</td>
+</tr>
+<tr>
+  <td><code>setShowPageBreak</code></td>
+  <td><code>(value: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>设置是否显示分页符标记。</td>
+</tr>
+<tr>
+  <td><code>getShowPageBreak</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>获取分页符标记显示状态。</td>
+</tr>
+<tr>
+  <td><code>setShowSectionBreak</code></td>
+  <td><code>(value: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>设置是否显示分节符标记。</td>
+</tr>
+<tr>
+  <td><code>getShowSectionBreak</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>获取分节符标记显示状态。</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>PagePosition</code>：</p>
+<pre><code class="language-ts">type PagePosition = {
+  pageNum: number;
+  pageCnt: number;
+  total: number;
+};
+</code></pre>
+<p>Document 示例：</p>
+<pre><code class="language-ts">await app.Document.exportPdf();
+
+app.Document.setPageView(&quot;wide&quot;);
+app.Document.goToPage(3);
+
+const page = app.Document.getCurrentPagePosition();
+console.log(page.pageNum, page.pageCnt, page.total);
+
+app.Document.setPageOrientation(&quot;Portrait&quot;);
+app.Document.setPageSize(21, 29.7);
+await app.Document.cut();
+app.Document.setShowParagraphMarks(true);
+app.Document.setShowPageBreak(true);
+app.Document.setShowSectionBreak(true);
+</code></pre>
+<p>页面设置参数说明：</p>
+<ul>
+<li><code>setPageOrientation(...)</code> 不接收空字符串、自定义字符串或其他别名；传入非法值属于未定义行为。</li>
+<li><code>setPageSize(...)</code> 不会把 <code>0</code>、负数、空参数或极小尺寸归一化为安全值，接入方应在调用前完成参数校验。</li>
+</ul>
+<p>Document 支持的组件事件：</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>事件名</th>
+  <th>payload</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>DOCX_PAGE_POSITION_CHANGE</code></td>
+  <td>无</td>
+  <td>当前页位置变化。</td>
+</tr>
+<tr>
+  <td><code>DOCX_FIRST_PART_LOADING</code></td>
+  <td><code>(isLoading: boolean)</code></td>
+  <td>首批页面加载状态。</td>
+</tr>
+<tr>
+  <td><code>DOCX_END_LOADING</code></td>
+  <td><code>(count: number)</code></td>
+  <td>全部页面加载完成。</td>
+</tr>
+<tr>
+  <td><code>DOCUMENT_EXPORT_READY</code></td>
+  <td>无</td>
+  <td>导出完成。</td>
+</tr>
+<tr>
+  <td><code>DOCX_ZOOM_CHANGE</code></td>
+  <td>无</td>
+  <td>缩放变化。</td>
+</tr>
+<tr>
+  <td><code>DOCX_PART_LOADING</code></td>
+  <td><code>(pageIndex: number, ratio: number)</code></td>
+  <td>分段加载进度，<code>ratio</code> 通常为 <code>0</code> 到 <code>1</code>。</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>exportPdf(...)</code> 需要安全上下文（通常为 HTTPS 或 localhost）、<code>window.queryLocalFonts</code> 和本地字体访问权限。不满足条件时当前实现不会执行 PDF 导出。</p>
+<h2 id="paragraph">Paragraph<a class="heading-anchor" href="#paragraph" aria-label="定位到此标题">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>方法</th>
+  <th>签名</th>
+  <th>返回</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>setBold</code></td>
+  <td><code>(value?: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>设置或切换粗体。不传时按当前选区状态切换。</td>
+</tr>
+<tr>
+  <td><code>setItalic</code></td>
+  <td><code>(value?: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>设置或切换斜体。不传时按当前选区状态切换。</td>
+</tr>
+<tr>
+  <td><code>setUnderline</code></td>
+  <td><code>(lineType?: string): void</code></td>
+  <td><code>void</code></td>
+  <td>设置或取消下划线，默认线型为 <code>&quot;thick&quot;</code>。</td>
+</tr>
+<tr>
+  <td><code>setStrikeThrough</code></td>
+  <td><code>(value?: boolean): void</code></td>
+  <td><code>void</code></td>
+  <td>设置或切换删除线。</td>
+</tr>
+<tr>
+  <td><code>setFontSize</code></td>
+  <td><code>(value: string \| number): void</code></td>
+  <td><code>void</code></td>
+  <td>设置字号；空值、非数值会被忽略。</td>
+</tr>
+<tr>
+  <td><code>setFontName</code></td>
+  <td><code>(value: string): void</code></td>
+  <td><code>void</code></td>
+  <td>设置字体；当前 API 不校验字体是否已安装或是否存在于字体列表。</td>
+</tr>
+<tr>
+  <td><code>setFontColor</code></td>
+  <td><code>(value: DocxColor): void</code></td>
+  <td><code>void</code></td>
+  <td>设置字体颜色，支持 RGB 或主题色对象。主题色必须来自 <code>getColorPalette()</code> 返回项。</td>
+</tr>
+<tr>
+  <td><code>getColorPalette</code></td>
+  <td><code>(): { theme: unknown[]; standard: unknown[] }</code></td>
+  <td><code>{ theme; standard }</code></td>
+  <td>获取主题色和标准色。</td>
+</tr>
+<tr>
+  <td><code>setAlignment</code></td>
+  <td><code>(value: ParagraphAlignment): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>设置段落水平对齐。</td>
+</tr>
+<tr>
+  <td><code>getAlignment</code></td>
+  <td><code>(): ParagraphAlignment \| undefined</code></td>
+  <td><code>ParagraphAlignment \| undefined</code></td>
+  <td>获取当前段落水平对齐。</td>
+</tr>
+<tr>
+  <td><code>setLineSpacing</code></td>
+  <td><code>(value: number): void</code></td>
+  <td><code>void</code></td>
+  <td>设置行距倍数，常用值如 <code>1</code>、<code>1.15</code>、<code>1.5</code>、<code>2</code>。</td>
+</tr>
+<tr>
+  <td><code>setBulletList</code></td>
+  <td><code>(index?: number): boolean \| undefined</code></td>
+  <td><code>boolean \| undefined</code></td>
+  <td>设置或取消项目符号，默认 <code>index = -1</code>。</td>
+</tr>
+<tr>
+  <td><code>setNumberedList</code></td>
+  <td><code>(index?: number): boolean \| undefined</code></td>
+  <td><code>boolean \| undefined</code></td>
+  <td>设置或取消编号，默认 <code>index = -1</code>。</td>
+</tr>
+</tbody>
+</table></div>
+<p>颜色和对齐参数：</p>
+<pre><code class="language-ts">type DocxColor =
+  | { r: number; g: number; b: number }
+  | { name: string; theme: number; tint?: number; shade?: number };
+
+type ParagraphAlignment =
+  | &quot;Left&quot;
+  | &quot;Centered&quot;
+  | &quot;Right&quot;
+  | &quot;Justified&quot;
+  | &quot;Distributed&quot;
+  | 0
+  | 1
+  | 2
+  | 3
+  | 4;
+</code></pre>
+<p><code>ParagraphAlignment</code> 数字值与 PPTX 对齐枚举一致：<code>0</code> 右对齐、<code>1</code> 左对齐、<code>2</code> 居中、<code>3</code> 两端对齐、<code>4</code> 分散对齐。</p>
+<p>主题色调用必须包含 <code>name</code> 和 <code>theme</code>；仅传 <code>{ theme, tint }</code> 时无法定位主题色名称，不属于受支持参数。</p>
+<p>Paragraph 示例：</p>
+<pre><code class="language-ts">app.Paragraph.setBold(true);
+app.Paragraph.setItalic(false);
+app.Paragraph.setUnderline(&quot;single&quot;);
+app.Paragraph.setStrikeThrough(false);
+
+app.Paragraph.setFontName(&quot;Microsoft YaHei&quot;);
+app.Paragraph.setFontSize(16);
+app.Paragraph.setFontColor({ r: 192, g: 0, b: 0 });
+
+app.Paragraph.setAlignment(&quot;Centered&quot;);
+app.Paragraph.setLineSpacing(1.5);
+app.Paragraph.setBulletList(0);
+</code></pre>
+<h2 id="table">Table<a class="heading-anchor" href="#table" aria-label="定位到此标题">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>方法</th>
+  <th>签名</th>
+  <th>返回</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>insertTable</code></td>
+  <td><code>(rows?: number, columns?: number): void</code></td>
+  <td><code>void</code></td>
+  <td>插入表格，默认 <code>3 x 4</code>。</td>
+</tr>
+<tr>
+  <td><code>delete</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>删除当前表格。</td>
+</tr>
+<tr>
+  <td><code>addRows</code></td>
+  <td><code>(insertLocation?: InsertLocation \| number, rowCount?: number): void</code></td>
+  <td><code>void</code></td>
+  <td>在当前位置插入行，默认向后插入 1 行；第一个参数传数字时表示行数。</td>
+</tr>
+<tr>
+  <td><code>addColumns</code></td>
+  <td><code>(insertLocation?: InsertLocation \| number, columnCount?: number): void</code></td>
+  <td><code>void</code></td>
+  <td>在当前位置插入列，默认向右插入 1 列；第一个参数传数字时表示列数。</td>
+</tr>
+<tr>
+  <td><code>deleteRows</code></td>
+  <td><code>(rowCount?: number): void</code></td>
+  <td><code>void</code></td>
+  <td>删除当前行，默认删除 1 行。</td>
+</tr>
+<tr>
+  <td><code>deleteColumns</code></td>
+  <td><code>(columnCount?: number): void</code></td>
+  <td><code>void</code></td>
+  <td>删除当前列，默认删除 1 列。</td>
+</tr>
+<tr>
+  <td><code>mergeCells</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>合并当前选中的单元格。</td>
+</tr>
+<tr>
+  <td><code>unmergeCells</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>取消合并单元格。</td>
+</tr>
+<tr>
+  <td><code>isInTable</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>当前选区是否在表格内。</td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-ts">type InsertLocation =
+  | &quot;Start&quot;
+  | &quot;Before&quot;
+  | &quot;Left&quot;
+  | &quot;start&quot;
+  | &quot;before&quot;
+  | &quot;left&quot;
+  | &quot;End&quot;
+  | &quot;After&quot;
+  | &quot;Right&quot;
+  | &quot;end&quot;
+  | &quot;after&quot;
+  | &quot;right&quot;;
+</code></pre>
+<p><code>&quot;Start&quot;</code>、<code>&quot;Before&quot;</code>、<code>&quot;Left&quot;</code> 及其小写形式表示向前或向左插入；其他值按默认 <code>&quot;End&quot;</code> 处理，即向后或向右插入。</p>
+<p>Table 示例：</p>
+<pre><code class="language-ts">app.Table.insertTable(3, 5);
+
+if (app.Table.isInTable()) {
+  app.Table.addColumns(&quot;End&quot;, 1);
+  app.Table.addRows(2);
+  app.Table.mergeCells();
+}
+</code></pre>
+<h2 id="selection">Selection<a class="heading-anchor" href="#selection" aria-label="定位到此标题">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>方法</th>
+  <th>签名</th>
+  <th>返回</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>getSelectedText</code></td>
+  <td><code>(options?: unknown): string</code></td>
+  <td><code>string</code></td>
+  <td>获取当前选区文本；没有有效选区时返回空字符串。</td>
+</tr>
+<tr>
+  <td><code>getParagraphInfo</code></td>
+  <td><code>(pageIndex?: number): ParagraphInfo</code></td>
+  <td><code>ParagraphInfo</code></td>
+  <td>获取段落所在行列和选区 ID。</td>
+</tr>
+<tr>
+  <td><code>clearSelection</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>清空页面选区高亮。</td>
+</tr>
+<tr>
+  <td><code>hideCursor</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>隐藏光标。</td>
+</tr>
+<tr>
+  <td><code>insertBreak</code></td>
+  <td><code>(type?: BreakType): void</code></td>
+  <td><code>void</code></td>
+  <td>插入分页符、分节符或分栏符；只支持下方 <code>BreakType</code> 枚举。</td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-ts">type ParagraphInfo = {
+  row: number;
+  col: number;
+  selection: {
+    startPosId?: string;
+    endPosId?: string;
+  };
+};
+
+type BreakType =
+  | &quot;Page&quot;
+  | &quot;SectionNext&quot;
+  | &quot;SectionContinuous&quot;
+  | &quot;SectionEven&quot;
+  | &quot;SectionOdd&quot;
+  | &quot;Column&quot;;
+</code></pre>
+<p><code>insertBreak(...)</code> 参数说明：</p>
+<ul>
+<li><code>&quot;SectionNext&quot;</code>、<code>&quot;SectionContinuous&quot;</code>、<code>&quot;SectionEven&quot;</code>、<code>&quot;SectionOdd&quot;</code> 分别表示下一页、连续、偶数页、奇数页分节符。</li>
+<li>不支持 <code>&quot;SectionNextPage&quot;</code>、<code>&quot;SectionEvenPage&quot;</code>、<code>&quot;SectionOddPage&quot;</code>、<code>&quot;Line&quot;</code> 等别名；软回车当前不属于该 API 的能力范围。</li>
+<li>省略参数会插入分页符。非法参数的兜底行为不作为对外保证，接入方应只传合法枚举。</li>
+</ul>
+<p>Selection 示例：</p>
+<pre><code class="language-ts">app.Selection.insertBreak(&quot;Page&quot;);
+app.Selection.insertBreak(&quot;SectionNext&quot;);
+
+const info = app.Selection.getParagraphInfo();
+console.log(info.row, info.col);
+</code></pre>
+<p>Selection 支持的组件事件：</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>事件名</th>
+  <th>payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>SELECTION_CHANGE</code></td>
+  <td><code>DocxSelectionChange</code></td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-ts">type DocxSelectionChange = {
+  bold: boolean;
+  italic: boolean;
+  fontName: string;
+  fontSize: number | string;
+  fontColor: unknown;
+  underline: boolean;
+  strikeout: boolean;
+  paraAlignHorizontal:
+    | &quot;left&quot;
+    | &quot;center&quot;
+    | &quot;right&quot;
+    | &quot;justify&quot;
+    | &quot;distribute&quot;
+    | undefined;
+  canCopy: boolean;
+};
+</code></pre>
+<h2 id="finder">Finder<a class="heading-anchor" href="#finder" aria-label="定位到此标题">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>方法</th>
+  <th>签名</th>
+  <th>返回</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>search</code></td>
+  <td><code>(text: string): void</code></td>
+  <td><code>void</code></td>
+  <td>开始查找关键词。</td>
+</tr>
+<tr>
+  <td><code>getSelectText</code></td>
+  <td><code>(): string \| undefined</code></td>
+  <td><code>string \| undefined</code></td>
+  <td>获取当前选中文本；仅在选中文本长度大于 <code>0</code> 且小于 <code>256</code> 时返回。</td>
+</tr>
+<tr>
+  <td><code>selectNext</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>跳到下一个查找结果。</td>
+</tr>
+<tr>
+  <td><code>selectPrevious</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>跳到上一个查找结果。</td>
+</tr>
+<tr>
+  <td><code>getSearchStatus</code></td>
+  <td><code>(): FinderStatus</code></td>
+  <td><code>FinderStatus</code></td>
+  <td>获取当前查找状态。</td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-ts">type FinderStatus = {
+  keyword: string;
+  allFounds: unknown[];
+  currentIndex: number;
+  totalCount: number;
+  loop: boolean;
+  currentSelect: unknown;
+  countNum?: number;
+};
+</code></pre>
+<p>Finder 支持的组件事件：</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>事件名</th>
+  <th>payload</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>DOCX_OPEN_FIND_UI</code></td>
+  <td>无</td>
+  <td>文档请求打开查找 UI。</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>DOCX_OPEN_FIND_UI</code> 表示编辑器发出了“打开查找面板”的请求，不表示每次执行 <code>Finder.search(...)</code> 都会触发该事件；搜索结果状态请使用 <code>getSearchStatus()</code> 获取。</p>
+<p>Finder 示例：</p>
+<pre><code class="language-ts">const selectedWord = app.Finder.getSelectText();
+app.Finder.search(selectedWord || &quot;合同&quot;);
+app.Finder.selectNext();
+
+const status = app.Finder.getSearchStatus();
+console.log(status.currentIndex, status.totalCount);
+</code></pre>
+<h2 id="undoredo">UndoRedo<a class="heading-anchor" href="#undoredo" aria-label="定位到此标题">#</a></h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>方法</th>
+  <th>签名</th>
+  <th>返回</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>undo</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>撤销。</td>
+</tr>
+<tr>
+  <td><code>redo</code></td>
+  <td><code>(): void</code></td>
+  <td><code>void</code></td>
+  <td>重做。</td>
+</tr>
+<tr>
+  <td><code>canUndo</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>是否可撤销。</td>
+</tr>
+<tr>
+  <td><code>canRedo</code></td>
+  <td><code>(): boolean</code></td>
+  <td><code>boolean</code></td>
+  <td>是否可重做。</td>
+</tr>
+</tbody>
+</table></div>
+<p>UndoRedo 支持的组件事件：</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+  <th>事件名</th>
+  <th>payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>UNDO_REDO_STATE_CHANGE</code></td>
+  <td>无</td>
+</tr>
+</tbody>
+</table></div>
+<p>示例：</p>
+<pre><code class="language-ts">if (app.UndoRedo.canUndo()) {
+  app.UndoRedo.undo();
+}
+</code></pre>
+
+      </article>
+    </main>
+    <aside class="toc"><div class="toc-card"><p class="toc-heading">本页目录</p><ul><li class="lvl-2"><a href="#组件">组件</a></li>
+<li class="lvl-2"><a href="#快速示例">快速示例</a></li>
+<li class="lvl-2"><a href="#document">Document</a></li>
+<li class="lvl-2"><a href="#paragraph">Paragraph</a></li>
+<li class="lvl-2"><a href="#table">Table</a></li>
+<li class="lvl-2"><a href="#selection">Selection</a></li>
+<li class="lvl-2"><a href="#finder">Finder</a></li>
+<li class="lvl-2"><a href="#undoredo">UndoRedo</a></li></ul></div></aside>
+  </div>
+  <script>window.STATIC_DOCS_SEARCH = [{"title":"Office SDK 开发者文档","path":"index.html","href":"../index.html","text":"Office SDK 开发者文档 本文档面向接入 office sdk 的前端开发者，聚焦浏览器端嵌入式 Office 组件的接入与使用。 文档目录 概述 开发指南：入门指南 开发指南：包结构 开发指南：使用指南 开发指南：CSP 部署指南 API Reference：总览 API Reference：公共约定 API Reference：DOCX API Reference：XLSX API Reference：PPTX 文档范围 当前文档主要覆盖以下内容： Office SDK 的产品定位与适用场景 浏览器环境下的基础接入方式 静态 lib 发布包的目录结构 企业 CSP 环境下的部署配置 openfile(...) 打开流程和 createfile(...) 创建流程 widget.close() 实例生命周期方法 docx、xlsx、pptx 当前 public API 的组件与方法"},{"title":"Office SDK 概述","path":"product-overview/office-sdk-overview.html","href":"../product-overview/office-sdk-overview.html","text":"Office SDK 概述 office sdk 是一个可嵌入 Web 页面中的 Office 文档组件 SDK，用于在浏览器中加载、渲染并承载 Office 文档查看能力。 集成方可以在自己的页面中引入 SDK，选择一个 DOM 容器作为挂载点，然后通过统一的接口打开文件并完成渲染。 适用场景 Office SDK 适用于以下场景： 在业务系统中内嵌 Office 文档预览区域 在本地文件选择后直接打开文档进行查看 在已有页面中快速嵌入 Word、Excel、PowerPoint 文档组件 在现有前端系统中集成统一的文档查看入口 目标读者 本文档面向以下读者： 负责前端页面集成的开发者 需要在 Web 应用中接入 Office 文档能力的项目团队 负责客户交付和静态资源部署的工程师 核心能力 Office SDK 当前提供以下基础能力： 打开本地文件或浏览器可访问地址中的 Office 文件 创建新的 DOCX、XLSX 或 PPTX 文件 自动识别文档类型并加载对应组件 将文档实例挂载到指定 DOM 节点渲染 在页面切换或组件销毁时销毁实例并释放资源 通过 uiOptions 控制顶部工具栏和底部状态栏显示 通过 mode.readOnly 控制文档以只读模式打开 通过 mode.lang 指定文档打开时使用的语言 暴露公开应用 API 对象用于进一步扩展 支持范围 当前主流程支持以下文档类型： Word：.doc、.docx Excel：.xls、.xlsx PowerPoint：.pptx 集成方式 Office SDK 采用静态资源包内嵌集成方式，典型流程如下： 1. 获取并部署 office sdk/lib/ 静态资源目录 2. 通过静态路径加载 UI.js，SDK 会自动加载 style.css 3. 按需引入 preload.js 提前请求关键运行时资源 4. 调用 openfile(...) 打开文件，或调用 createfile(...) 创建文件 5. 将返回的 widget 挂载到目标容器并执行渲染 6. 在不再使用时调用 close() 关闭实例 运行环境建议 建议在支持静态资源部署和 ES Module 的现代 Web 应用中集成 Office SDK。 推荐接入环境： 使用最新稳定版 Chrome 或 Chromium Edge 的现代浏览器环境 支持 ES Module、动态 import()、Web Worker、SharedWorker、WebAssembly、IndexedDB、Promise、Blob、ArrayBuffer 的前端运行环境 可正常挂载 DOM 节点的页面应用 可部署完整 office sdk/lib/ 目录的静态资源服务 浏览器兼容性 Office SDK 建议优先使用最新稳定版 Chrome 或 Chromium Edge。当前兼容性以能力检测为准，而不是仅按浏览器版本判断： 运行环境 建议 Chrome / Chromium Edge 主要支持环境；使用最新稳定版并验证 SharedWorker、IndexedDB 和 WebAssembly。 Firefox / Safari 上线前在目标版本完成专项验证，尤其确认 SharedWorker 和 IndexedDB 在当前隐私策略下可用。 iOS Safari / iOS WKWebView 必须在实际容器中验证。WebView 配置、第三方上下文和存储策略可能限制 SharedWorker 或 IndexedDB。 Android WebView 必须在实际系统 WebView 版本和宿主配置中验证。 不支持 Internet Explorer、旧版 EdgeHTML Edge、Android Browser，以及缺少 ES Module、动态 import()、SharedWorker、IndexedDB 或 WebAssembly 的浏览器和 WebView。即使相关 API 存在，无痕模式、企业策略或安全容器也可能禁用实际能力。 PDF 导出要求 Document.exportPdf(...) 还要求安全上下文（通常为 HTTPS 或 localhost）、window.queryLocalFonts 和本地字体访问权限。不满足这些条件时当前实现不会执行 PDF 导出。"},{"title":"开发指南：入门指南","path":"development-guide/getting-started.html","href":"../development-guide/getting-started.html","text":"开发指南：入门指南 本文档介绍如何在前端页面中快速接入 office sdk，并完成最小可运行的文档打开和渲染。 接入前环境确认 请先确认接入页面运行在支持 ES Module、动态 import()、Web Worker、SharedWorker、WebAssembly、IndexedDB、Promise、Blob 和 ArrayBuffer 的浏览器环境中。 SharedWorker 和 IndexedDB 是当前打开流程的必需能力。除了检查 API 是否存在，还要确认无痕模式、企业策略、第三方上下文限制或 WebView 配置没有禁用它们。兼容性建议见 Office SDK 概述。 第一步：部署静态资源包 请将发布产物中的整个 lib/ 目录部署到静态资源目录中，建议映射为： 部署时请保留完整目录结构，不要只拷贝单个入口文件。 典型部署后的访问路径示例： 第二步：准备挂载容器 在页面中准备一个容器节点，用于承载 Office 文档组件。 建议为挂载容器设置明确的宽高，否则页面可能无法按预期展示文档区域。 第三步：按需预加载 加载 UI.js 时 SDK 会自动插入 /office sdk/style.css，通常不需要手动在页面中引入样式。 如果希望样式更早下载、减少首次渲染等待，也可以在页面头部提前声明： 如果页面进入后大概率会马上打开文档，可以引入 preload.js，提前请求关键 JavaScript 运行时、worker 入口和文档应用模块： 如果是在 Vite、Webpack 等工程中，也可以运行时动态加载： preload.js 不会预取全部 .wasm 二进制或所有语言部署文件，这些资源仍可能在首次打开文档时按需加载。它会请求较多运行时资源，更适合文档详情页、预览页或用户点击“立即打开”前后的场景；如果当前页面只是普通列表页，建议按需触发，不要无条件预加载。 第四步：加载 SDK 入口 UI.js 本身是标准 ES Module 文件，可以按接入环境选择两种方式。 方式一：原生 ESM 页面直接静态导入 如果页面本身就是浏览器原生 type=\"module\" 环境，可以直接使用静态 import： 方式二：在现有前端工程中运行时动态加载 如果是在 Vite、Webpack 等现有前端工程中接入，通常更推荐通过运行时动态加载 UI.js，这样可以避免构建工具在编译阶段接管 /office sdk/UI.js 的解析和打包。 示例： 如果工程环境明确支持按 URL 直接导入模块，也可以使用： 第五步：打开文件并渲染 下面的示例展示了最小可运行接入流程。 页面切换、组件卸载或重新打开文件前，需要关闭旧实例： close() 会关闭当前文档实例、卸载组件并释放 SDK 内部资源。推荐在业务组件的卸载钩子或重新打开文件前调用。 如果需要控制 SDK 的显示状态，可以通过第二个参数传入配置对象： showTopBar 控制顶部工具栏显示和隐藏，不传时使用 SDK 默认布局 showBottomBar 控制底部状态栏显示和隐藏，不传时使用 SDK 默认布局 mode.readOnly 为 true 时，文档会以只读模式打开 mode.lang 指定文档打开时使用的语言，例如 zh CN、en US 如果还需要同时传用户信息，可以这样写： 常见问题 1. 为什么会提示挂载节点找不到？ widget.mount(...) 接收 HTMLElement 或字符串。以 、.、 开头的字符串按 CSS 选择器处理，其他字符串按 DOM 元素 id 处理。请确认： 传入的选择器在当前页面中存在 调用时页面 DOM 已经完成渲染 挂载容器没有被条件渲染隐藏或销毁 2. 为什么静态资源部署后仍然加载失败？ 请重点检查以下内容： 是否部署了完整的 lib/ 目录，而不是只部署 UI.js style.css、worker/、worker/wasm/、locale assets/、vendor/ 是否都可以通过浏览器访问 UI.js 的访问路径是否与页面中实际引用路径一致 发布到服务器后是否改动了文件相对位置，导致运行时依赖无法按相对路径加载 如果页面配置了 CSP，请参考 [CSP 部署指南 检查 script src、worker src、style src、img src 和 connect src 页面和 worker/ 是否同源；仅配置 CORS 不能保证跨域 SharedWorker 可用 浏览器是否允许 SharedWorker 和 IndexedDB"},{"title":"开发指南：包结构","path":"development-guide/package-structure.html","href":"../development-guide/package-structure.html","text":"开发指南：包结构 本文档介绍 office sdk 静态 lib 发布包的目录结构，以及各目录和文件在接入中的作用。 目录结构 lib/ 是部署时使用的静态资源目录。一个典型目录结构如下： 入口文件 UI.js 对外主入口文件。通过它调用 openfile(...) 或 createfile(...)。 preload.js 可选预加载入口。导入后会提前请求关键 JavaScript 运行时、worker 入口和文档应用模块，用于降低首次打开文档的部分加载延迟；它不会预取全部 .wasm 二进制或所有语言部署文件。 style.css SDK 页面样式文件，接入页面时需要显式引入。 UI.d.ts TypeScript 类型声明文件，仅在 TS 工程中提供类型提示，不参与浏览器运行。 其中包含 OfficeSdkOpenOptions、OfficeSdkUiOptions、OfficeSdkOpenMode 等公开类型。 运行时核心文件 office.core.js Office 核心运行时代码。 office.locale.js 语言和本地化相关运行时代码。 worker/ Worker 运行时资源目录，文档加载过程中会依赖其中脚本和 wasm/ 资源。 locale assets/ 多语言资源目录，当前语言资源位于 locale assets/deploy/i18n/。 vendor/ 运行时依赖的第三方脚本目录。 运行时拆分模块 下面这些文件属于 SDK 拆分后的运行时模块： UI.runtime.js ApiBase.js index browser.js compat globals.js mountDocxApp.js mountXlsxApp.js mountPptxApp.js DropdownPopoverList.js 这些文件不需要手动引入，但部署时必须和其余资源一起保留，否则 UI.js 在运行时可能无法按相对路径加载依赖模块。 辅助文件 manifest.json 发布产物清单，可用于排查资源完整性和入口映射。 package.json 静态资源包的元数据文件，记录包名、版本、入口、类型声明和样式入口。它用于交付识别和工具侧读取元信息。 部署建议 部署时请保留完整目录结构，不建议： 只拷贝 UI.js 改动 worker/、locale assets/、vendor/ 的相对位置 手动删除看起来没有直接引用的运行时模块 建议将整个 lib/ 目录映射为统一静态路径，例如："},{"title":"开发指南：使用指南","path":"development-guide/usage-guide.html","href":"../development-guide/usage-guide.html","text":"开发指南：使用指南 本文档说明 office sdk 的标准打开流程、参数、返回值和实例生命周期。组件级 API 请看 API Reference。 基本流程 下面示例假设运行在浏览器原生 ESM 页面，或已经按 入门指南 动态加载 /office sdk/UI.js。如果在 Vite、Webpack 等业务源码中接入，推荐使用入门指南里的运行时动态加载写法。 openfile 签名 创建空白文档可调用 OfficeSdk.createfile(1 2 3, options)，其中 1、2、3 分别表示 DOCX、XLSX、PPTX；返回值和 widget 生命周期与 openfile(...) 相同。 fileData 参数 字段 必填 说明 docId 否 文档 ID，用于缓存和实例生命周期标识。不传时 SDK 会根据文件信息生成。 fileName 是 文件名，用扩展名判断类型。当前 openfile(...) 支持 doc、docx、xls、xlsx、pptx。 file 是 文件内容或浏览器可访问的地址。支持 File/Blob、ArrayBuffer、TypedArray，以及 blob:、data:、http(s):、file:、以 / 开头的绝对路径、以 ./ 或 ../ 开头的相对路径。普通字符串（如 files/a.docx）不会被识别为 URL。不能传 null 或 undefined。 options 参数 字段 说明 userData 当前用户信息。不传时会补默认用户：nickName: \"Local User\"、avatar: \"\"、opts.color: \" 2F80ED\"。 uiOptions.showTopBar 是否显示顶部工具栏。不传时使用 SDK 默认布局。 uiOptions.showBottomBar 是否显示底部状态栏。不传时使用 SDK 默认布局。 mode.readOnly 是否以只读模式打开。 mode.lang 文档语言，例如 zh CN、en US。不传时回退到 window.lang、<html lang 、浏览器语言。 返回值 docType： 值 类型 1 Word / DOCX 2 Excel / XLSX 3 PowerPoint / PPTX widget.mount(target) 支持 HTMLElement 和字符串。以 、.、 开头的字符串按 CSS 选择器处理，其他字符串按 DOM 元素 id 处理： widget.render() 会等待文档 ready，成功后返回公开 app API 对象。后续可以调用： widget.docTypeName 在挂载完成后通常为 \"WORD\"、\"EXCEL\"、\"PPT\"；挂载前可能为 null。 实例生命周期 widget.close() 用于关闭当前文档实例并释放运行时资源。 方法 说明 推荐场景 close() 关闭当前 widget，释放文档实例、内部事件监听和挂载资源。 页面卸载、业务组件卸载或重新打开文件前调用。 调用时机： 页面路由切换或业务组件卸载前 用户重新选择文件并准备打开新文件前 不再需要当前文档 viewer 时 示例： URL 文件示例 重新打开文件 重新打开前先销毁旧实例： 事件示例 事件监听使用组件级 addEventListener。按事件归属选择组件：文档加载、导出、缩放事件监听 Document，选区事件监听 Selection，撤销重做事件监听 UndoRedo。 各文档类型支持的事件名和 payload 见 [API Reference。"},{"title":"开发指南：CSP 部署指南","path":"development-guide/csp.html","href":"../development-guide/csp.html","text":"开发指南：CSP 部署指南 本文档面向需要在企业内网、门户系统或安全网关后接入 office sdk 的场景，说明 SDK 在 Content Security Policy 下的最小部署要求和常见调整方式。 适用场景 如果接入页面配置了 CSP，请在上线前确认 SDK 静态资源目录、文档文件来源和页面自身脚本策略都已纳入白名单。SDK 会加载 ES Module、样式、Worker、SharedWorker、WebAssembly、图片和字体等资源，过窄的 CSP 会导致文档打开失败或空白。 推荐起始配置 下面配置假设： SDK 的完整 lib/ 目录与接入页面同源部署，例如 /office sdk/ 文档文件也从同源或明确的业务文件域名加载 接入页面通过外部 type=\"module\" 脚本或动态 import() 加载 SDK，不依赖 inline script 请将 https://<file host 替换为实际的文档文件、图片或鉴权接口域名。如果所有文件都与页面同源，可以移除该占位域名。 指令说明 指令 是否通常必需 说明 script src 'self' 是 允许加载 UI.js、preload.js、运行时拆分模块和 wasm JS glue 文件。 'wasm unsafe eval' 是 允许浏览器编译和实例化 WebAssembly。 'unsafe eval' 兼容项 用于兼容部分浏览器或安全策略对 WebAssembly 运行时的识别差异。若企业安全规范不允许配置该项，请先在目标浏览器完成 CSP 验证。 script src elem 'self' 建议 如果企业策略显式配置了 script src elem，需要允许同源模块脚本。 worker src 'self' 是 SDK 默认从静态 worker/ 目录加载 module Worker 和 SharedWorker。 child src 'self' 建议 兼容部分旧浏览器或旧 CSP 实现对 Worker 的 fallback。 style src 'self' 'unsafe inline' 是 SDK 会加载 style.css，运行时组件也会写入必要的 inline style。 font src 'self' data: 建议 允许加载 SDK/文档渲染所需字体和内嵌字体数据。 img src 'self' data: blob: 是 文档中的图片、预览图、导出图像和临时对象 URL 可能使用 data: 或 blob:。 connect src 按业务配置 打开远程文档 URL、请求鉴权接口或加载跨域资源时，需要加入对应域名。 object src 'none' 建议 SDK 不依赖 <object ，建议禁用。 base uri 'self' 建议 限制页面 <base 注入风险。 什么时候需要 blob: SDK 默认 Worker 是静态文件 URL，因此基础配置中 worker src 'self' 即可。只有在以下情况才需要把 blob: 加入 worker src 和 child src： 接入方把 Worker URL 改写成 blob: URL 宿主页面或微前端框架统一把 Worker 包装成 Blob Worker 企业代理或安全容器要求通过 Blob URL 注入 Worker 脚本 对应配置示例： Inline script 建议 SDK 本身不要求 script src 'unsafe inline'。如果接入页面需要写 inline bootstrap 脚本，优先使用 nonce 或 hash： 页面中的脚本标签示例： 如果企业安全规范禁止 inline script，建议把接入代码放入独立 .js 文件，并通过同源模块脚本加载。 跨域部署注意事项 当前 SDK 直接通过 new SharedWorker(workerUrl) 创建 SharedWorker。SharedWorker 对脚本来源有严格的同源限制，因此仅配置 CSP 和 CORS 不能保证完整 SDK 可跨域运行。 推荐做法： 将完整 lib/ 与接入页面部署在同一 origin 或由宿主域名反向代理 SDK 静态资源，使 /office sdk/worker/ 对页面表现为同源 保持 worker/、worker/wasm/、locale assets/、vendor/ 的完整目录结构 为 .wasm 返回 application/wasm MIME 类型 ES Module、样式或文档 URL 可以按浏览器规则单独配置跨域访问，但这不等于跨域 SharedWorker 可用。上线前必须在最终域名、CSP 和浏览器环境中实际打开文档验证。 常见 CSP 报错排查 报错现象 可能原因 处理方式 Refused to load the script script src 或 script src elem 未允许 SDK 资源域名 加入 SDK 静态资源域名，并确认 UI.js、运行时 chunk 可访问。 Refused to create a worker worker src 未允许 Worker 来源，或 SharedWorker 脚本与页面不同源 确认 worker src 允许同源 Worker，并将 worker/ 同源部署或通过宿主域名反向代理；若使用 Blob Worker，额外加入 blob:。 Refused to compile or instantiate WebAssembly 缺少 'wasm unsafe eval' 或浏览器只识别 'unsafe eval' 在 script src 中加入 'wasm unsafe eval'；必要时保留 'unsafe eval'。 文档图片丢失 img src 未允许 data: 或 blob: 在 img src 中加入 data: 和 blob:。 样式错乱 style src 未允许 style.css 或 inline style 允许 SDK 样式域名，并保留 'unsafe inline'。 远程文档打开失败 connect src 未允许文件域名或鉴权接口域名 将实际业务域名加入 connect src。 上线检查清单 已部署完整 lib/ 目录，而不是只部署 UI.js style.css、worker/、worker/wasm/、locale assets/、vendor/ 均可直接访问 CSP 中允许 SDK 静态资源域名 CSP 中允许 Worker 和 WebAssembly 所需指令 SharedWorker 脚本与宿主页面同源 目标浏览器允许 SharedWorker 和 IndexedDB 打开 .wasm 文件时服务器返回 application/wasm 远程文档 URL、鉴权接口和图片域名已加入 connect src / img src 浏览器 DevTools Console 中没有 CSP violation"},{"title":"API Reference","path":"api-reference/index.html","href":"index.html","text":"API Reference 本文档基于当前 office sdk 已暴露的公开 API 编写，面向浏览器端说明： OfficeSdk.openfile(...)、OfficeSdk.createfile(...) 的参数、返回值和生命周期 widget.render() 返回的公开 app 组件 docx、xlsx、pptx 的方法、参数、返回值、事件和示例 阅读顺序 1. 先看 公共 API 约定，了解 openfile(...)、createfile(...)、widget.mount(...).render()、事件模型和颜色参数。 2. 再按文档类型阅读 DOCX API、XLSX API、PPTX API。 组件范围 类型 当前公开组件 DOCX Document、Paragraph、Table、Selection、Finder、UndoRedo XLSX Document、Workbook、Worksheet、Selection、Finder、Cursor、UndoRedo PPTX Document、Paragraph、TextBox、Player、Selection、Viewer、UndoRedo 基础示例 事件监听使用组件级 addEventListener。按事件归属选择组件，例如选区事件监听 Selection，撤销重做事件监听 UndoRedo，文档加载和导出事件监听 Document： 文档目录 公共 API 约定 DOCX API XLSX API PPTX API"},{"title":"公共 API 约定","path":"api-reference/common.html","href":"common.html","text":"公共 API 约定 本文说明 office sdk 的入口、实例生命周期、通用类型、事件模型和颜色参数。各产品组件方法见 DOCX、XLSX、PPTX。 入口 公开入口位于部署后的静态资源目录。以下示例假设 lib/ 被映射为 /office sdk/： UI.js 会自动加载同目录的 style.css。如需让样式更早下载，也可以在页面头部额外声明 <link rel=\"stylesheet\" href=\"/office sdk/style.css\" / 。 preload 是可选入口，用来提前请求关键 JavaScript 运行时、worker 入口和文档应用模块。它不会预取全部 .wasm 二进制或所有语言部署文件；这些资源仍可能在首次打开文档时按需加载。页面会马上打开文档时推荐引入；普通列表页可以等用户点击打开后再加载。 运行环境前置条件 打开文档依赖以下浏览器能力： ES Module 和动态 import() Web Worker、SharedWorker 和 WebAssembly IndexedDB Promise、Blob、ArrayBuffer SharedWorker 和 IndexedDB 是当前打开流程的必需能力，缺少任意一项都可能导致 render() 失败。还应确认浏览器隐私策略、无痕模式、企业安全策略或 WebView 容器没有禁用这些能力。 SDK worker 默认通过 new SharedWorker(workerUrl) 直接创建，因此建议将完整 lib/ 与宿主页面同源部署。仅配置 CORS 不能保证跨域 SharedWorker 可用，详见 CSP 部署指南。 openfile 签名： 最小示例： 带用户、UI 和打开模式： createfile 创建新的 Office 文件： 参数说明： 参数 类型 必填 说明 docType OfficeWidgetCreateDocType 是 需要创建的 Office 文档类型标识。 options OfficeSdkOpenOptions \\ null 否 用户信息、界面配置、语言及只读模式等创建选项。 文档类型标识： 标识值 文档类别 文件格式 扩展名 1 Word 文档 Office Open XML Wordprocessing Document .docx 2 Excel 工作簿 Office Open XML Spreadsheet .xlsx 3 PowerPoint 演示文稿 Office Open XML Presentation .pptx 每次调用都会生成独立的 docId。options、返回值和 widget 生命周期与 openfile(...) 相同。 fileData 字段 必填 说明 docId 否 文档 ID，用于缓存和实例生命周期标识。不传时 SDK 会根据文件信息生成。 fileName 是 文件名，用扩展名识别文档类型。当前 openfile(...) 支持 doc、docx、xls、xlsx、pptx。 file 是 文件内容或浏览器可访问的文件地址。支持 File/Blob、ArrayBuffer、TypedArray，以及 blob:、data:、http(s):、file:、以 / 开头的绝对路径、以 ./ 或 ../ 开头的相对路径。普通字符串（如 files/a.docx）不会被识别为 URL。不能传 null 或 undefined。 URL 打开示例： options 字段 说明 userData 当前用户信息。不传时会补默认用户：nickName: \"Local User\"、avatar: \"\"、opts.color: \" 2F80ED\"。 uiOptions.showTopBar 是否显示顶部工具栏。不传时使用 SDK 默认布局。 uiOptions.showBottomBar 是否显示底部状态栏。不传时使用 SDK 默认布局。 mode.readOnly 是否以只读模式打开。true 时 SDK 会在文档加载后设置只读状态。 mode.lang 语言，例如 zh CN、en US。不传时依次回退到 window.lang、<html lang 、浏览器语言。 返回值 docType 取值： 值 类型 1 Word / DOCX 2 Excel / XLSX 3 PowerPoint / PPTX widget.mount(target) 支持： 字符串以 、. 或 [ 开头时按 CSS 选择器处理；其他字符串按 DOM id 处理。不要传入以标签名或复杂组合开头的选择器，例如 \"main .office container\"。 widget.render() 会等待文档 ready，成功后返回当前文档的公开 app API 对象。后续 API 均按 app.Component.method(...) 调用。 widget.docTypeName 在挂载完成后通常为 \"WORD\"、\"EXCEL\"、\"PPT\"；挂载前可能为 null。 widget 生命周期 widget.close() 用于关闭当前文档实例并释放运行时资源。 方法 签名 说明 close close(): Promise<void 关闭当前 widget，释放文档实例、内部事件监听和挂载资源。 建议在以下场景调用： 页面路由切换或业务组件卸载前 用户重新打开另一个文件前 不再需要当前文档 viewer 时 close() 返回 Promise<void ，调用方应 await 完成后再复用同一个容器打开新文档。 关闭示例： 错误处理与排查 openfile(...) 和 widget.render() 是异步方法；widget.mount(...) 是同步链式调用。建议使用 try...catch 包住打开与渲染流程，并把原始错误记录到日志中。 外部示例中的 shared/officeWidget.js 提供了 classifyError(error)，用于把常见打开失败转换成适合页面展示的 kind、title 和 detail。它是示例 helper，不是 UI.js 的公开导出；可以直接复用，也可以按同样规则在业务工程中实现。 常见错误分类： kind 常见触发原因 排查建议 no file 未传入文件内容，或用户尚未选择文件。 确认 fileData.file 是有效的 File、Blob、ArrayBuffer、TypedArray 或 URL 字符串。 missing file name 缺少 fileName。 传入带扩展名的 fileName，SDK 会根据扩展名识别文档类型。 no container 挂载容器不存在或尚未渲染。 确认 mount(...) 传入的选择器或 HTMLElement 有效，并在 DOM 挂载后调用。 unsupported 文件扩展名不在支持范围内。 当前主流程支持 doc、docx、xls、xlsx、pptx。 asset worker、wasm、语言包或运行时 chunk 加载失败。 确认完整部署 lib/，服务器能访问 worker/、worker/wasm/、locale assets/、vendor/，并正确返回 .wasm MIME。 open failed SDK 未返回可挂载的 widget。 记录原始错误和 fileData，检查文件是否损坏或运行时资源是否完整。 cancelled 新的打开请求接管了当前 viewer。 通常无需展示为失败；重新打开文件时可忽略该错误。 unknown 未匹配到上述分类的错误。 展示通用失败提示，同时上报原始错误信息便于定位。 app 组件 render() 返回的 app 是当前文档类型的公开 API 对象。常见组件： 文档类型 组件 DOCX Document、Paragraph、Table、Selection、Finder、UndoRedo XLSX Document、Workbook、Worksheet、Selection、Finder、Cursor、UndoRedo PPTX Document、Paragraph、TextBox、Player、Selection、Viewer、UndoRedo 示例： 事件模型 公开 API 使用组件级事件入口。 组件事件 Document、Selection、Finder、UndoRedo 等组件继承通用事件方法： 使用方式： 事件属于哪个组件，以各产品页的“组件事件”表为准。常见归属如下： 场景 组件 示例事件 文档加载、导出、缩放、页码变化 app.Document DOCUMENT EXPORT READY、DOCX END LOADING、XLSX WORKSHEET CHANGE、PPTX SLIDES CHANGED 选区变化 app.Selection SELECTION CHANGE 查找面板请求 app.Finder DOCX OPEN FIND UI、XLSX OPEN FIND UI 撤销重做状态变化 app.UndoRedo UNDO REDO STATE CHANGE 传入不属于当前组件的事件名会返回 \"no such event\"。组件事件不接收 options 参数；如果只需要触发一次，可以在回调中主动解绑： 颜色参数 DOCX 和 XLSX 常用 RGB 对象： RGB 对象只接收 r、g、b 三个通道，当前不支持 a/alpha 字段。 DOCX 还支持主题"},{"title":"DOCX API","path":"api-reference/docx.html","href":"docx.html","text":"DOCX API DOCX API 通过 widget.render() 返回的 app 调用： 组件 Component 说明 Document 导出、缩放、分页视图、页码跳转、页面设置、复制剪切粘贴、段落标记、分页符和分节符显示 Paragraph 字体、文字样式、段落对齐、行距、项目符号和编号 Table 表格插入、删除、行列操作、合并与取消合并 Selection 选区、光标、分隔符插入、选区变化事件 Finder 查找、上一个/下一个结果、查找状态 UndoRedo 撤销、重做和可用状态 快速示例 事件示例： Document 方法 签名 返回 说明 exportDocument (): Promise<void Promise<void 导出原始文档。 exportPdf (printOptions?: unknown): Promise<void Promise<void 按打印配置导出 PDF。 setZoom (value: number): void void 设置缩放比例，常用值如 80、100、120。 getZoom (): number number 获取当前缩放比例。 focusEditor (): void void 将焦点切回编辑区。 updateVisibleArea (): void void 重新计算可视区域。 setPageView (mode: \"single\" \\ \"multi\" \\ \"wide\"): void void 切换单页、多页、页宽视图。 goToPage (pageNum: number): void void 跳转到页码，pageNum 从 1 开始。 getCurrentPagePosition (pageIndex?: number): PagePosition \\ {} PagePosition \\ {} 获取页码信息；pageIndex 为页索引，从 0 开始，不传取当前页。当前实现不会稳定区分显式传入的 0 与未传值。 setPageOrientation (value: \"Portrait\" \\ \"Landscape\"): void void 设置页面纵向或横向；只支持精确传入 \"Portrait\" 或 \"Landscape\"。 setPageSize (width: number, height: number): void void 设置页面宽高，单位为厘米；width、height 必须是有限正数。 copy (): Promise<void Promise<void 触发编辑区复制。 cut (): Promise<void Promise<void 触发编辑区剪切。 paste (): Promise<void Promise<void 触发编辑区粘贴。 startReadOnly (): void void 进入只读状态。 endReadOnly (): void void 退出只读状态。 isReadOnly (): boolean boolean 获取当前只读状态。 setShowParagraphMarks (value: boolean): void void 设置是否显示段落换行标记。 getShowParagraphMarks (): boolean boolean 获取段落换行标记显示状态。 setShowPageBreak (value: boolean): void void 设置是否显示分页符标记。 getShowPageBreak (): boolean boolean 获取分页符标记显示状态。 setShowSectionBreak (value: boolean): void void 设置是否显示分节符标记。 getShowSectionBreak (): boolean boolean 获取分节符标记显示状态。 PagePosition： Document 示例： 页面设置参数说明： setPageOrientation(...) 不接收空字符串、自定义字符串或其他别名；传入非法值属于未定义行为。 setPageSize(...) 不会把 0、负数、空参数或极小尺寸归一化为安全值，接入方应在调用前完成参数校验。 Document 支持的组件事件： 事件名 payload 说明 DOCX PAGE POSITION CHANGE 无 当前页位置变化。 DOCX FIRST PART LOADING (isLoading: boolean) 首批页面加载状态。 DOCX END LOADING (count: number) 全部页面加载完成。 DOCUMENT EXPORT READY 无 导出完成。 DOCX ZOOM CHANGE 无 缩放变化。 DOCX PART LOADING (pageIndex: number, ratio: number) 分段加载进度，ratio 通常为 0 到 1。 exportPdf(...) 需要安全上下文（通常为 HTTPS 或 localhost）、window.queryLocalFonts 和本地字体访问权限。不满足条件时当前实现不会执行 PDF 导出。 Paragraph 方法 签名 返回 说明 setBold (value?: boolean): void void 设置或切换粗体。不传时按当前选区状态切换。 setItalic (value?: boolean): void void 设置或切换斜体。不传时按当前选区状态切换。 setUnderline (lineType?: string): void void 设置或取消下划线，默认线型为 \"thick\"。 setStrikeThrough (value?: boolean): void void 设置或切换删除线。 setFontSize (value: string \\ number): void void 设置字号；空值、非数值会被忽略。 setFontName (value: string): void void 设置字体；当前 API 不校验字体是否已安装或是否存在于字体列表。 setFontColor (value: DocxColor): void void 设置字体颜色，支持 RGB 或主题色对象。主题色必须来自 getColorPalette() 返回项。 getColorPalette (): { theme: unknown[]; standard: unknown[] } { theme; standard } 获取主题色和标准色。 setAlignment (value: ParagraphAlignment): boolean boolean 设置段落水平对齐。 getAlignment (): ParagraphAlignment \\ undefined ParagraphAlignment \\ undefined 获取当前段落水平对齐。 setLineSpacing (value: number): void void 设置行距倍数，常用值如 1、1.15、1.5、2。 setBulletList (index?: number): boolean \\ undefined boolean \\ undefined 设置或取消项目符号，默认 index = 1。 setNumberedList (index?: number): boolean \\ undefined boolean \\ undefined 设置或取消编号，默认 index = 1。 颜色和对齐参数： ParagraphAlignment 数字值与 PPTX 对齐枚举一致：0 右对齐、1 左对齐、2 居中、3 两端对齐、4 分散对齐。 主题色调用必须包含 name 和 theme；仅传 { theme, tint } 时无法定位主题色名称，不属于受支持参数。 Paragraph 示例： Table 方法 签名 返回 说明 insertTable (rows?: number, columns?: number): void void 插入表格，默认 3 x 4。 delete (): void void 删除当前表格。 addRows (insertLocation?: InsertLocation \\ number, rowCount?: number): void void 在当前位置插入行，默认向后插入 1 行；第一个参数传数字时表示行数。 addColumns (insertLocation?: InsertLocation \\ number, columnCount?: number): void void 在当前位置插入列，默认向右插入 1 列；第一个参数传数字时表示列数。 deleteRows (rowCount?: number): void void 删除当前行，默认删除 1 行。 deleteColumns (columnCount?: number): void void 删除当前列，默认删除 1 列。 mergeCells (): void void 合并当前选中的单元格。 unmergeCells (): void void 取消合并单元格。 isInTable (): boolean boolean 当前选区是否在表格内。 \"Start\"、\"Before\"、\"Left\" 及其小写形式表示向前或向左插入；其他值按"},{"title":"XLSX API","path":"api-reference/xlsx.html","href":"xlsx.html","text":"XLSX API XLSX API 通过 widget.render() 返回的 app 调用： 组件 Component 说明 Document 导出、缩放、编辑态和加载事件 Workbook 工作表、调色板、数字格式和保护状态 Worksheet 行列、冻结窗格、行高列宽 Selection 当前选区内容、字体、边框、填充、对齐和数字格式 Finder 查找、上一个/下一个结果、查找状态 Cursor 当前鼠标/光标所在目标区域。 UndoRedo 撤销、重做和可用状态 快速示例 事件示例： Document 方法 签名 返回 说明 isEditing (): boolean boolean 当前是否处于单元格内编辑态。 setZoom (value: number, redraw?: boolean): boolean boolean 设置缩放比例；redraw 默认 true，返回底层缩放操作结果。 getZoom (): number number 获取缩放比例。 focusEditor (): void void 当前 XLSX 实现为空操作。 updateVisibleArea (): void void 重新绘制当前活动工作表可视区域。 exportDocument (): Promise<void Promise<void 导出原始工作簿。 exportPdf (printOptions?: unknown): Promise<void Promise<void 按打印配置导出 PDF。 copy (): Promise<void Promise<void 复制当前选区。 cut (): Promise<void Promise<void 剪切当前选区。 paste (): Promise<void Promise<void 粘贴到当前选区。 startReadOnly (): void void 进入只读状态。 endReadOnly (): void void 退出只读状态。 isReadOnly (): boolean boolean 获取当前只读状态。 示例： 剪贴板说明： copy()、cut()、paste() 依赖浏览器 Clipboard API、安全上下文和用户授权。部分浏览器不允许向系统剪贴板写入编辑器自定义 MIME 类型；这种情况下可能抛出 NotAllowedError，但文档编辑态不会因此失效。接入方应捕获异常，并引导用户使用系统快捷键。 Document 支持的组件事件： 事件名 payload 说明 XLSX WORKSHEET LOADED 无 工作表加载完成。 XLSX END LOADING 无 文档加载结束。 DOCUMENT EXPORT READY 无 导出完成。 XLSX EDITING STATUS CHANGE (status: boolean) 单元格编辑态变化。 XLSX ZOOM CHANGE 无 缩放变化。 XLSX WORKSHEET LOADING RATIO (ratio: number) 工作表加载进度。 XLSX FIRST PART LOADING 无 首批内容加载完成。 XLSX WORKSHEET CHANGE ({ sheetProtected?: boolean }) 当前工作表变化。 exportPdf(...) 需要安全上下文（通常为 HTTPS 或 localhost）、window.queryLocalFonts 和本地字体访问权限。不满足条件时当前实现不会执行 PDF 导出。 Workbook 方法 签名 返回 说明 addWorksheet (): void void 新增工作表。 setWorksheetName (name: string, index?: number): boolean \\ number boolean \\ number 设置工作表名称；index 不传时使用活动工作表。返回成功状态或名称校验状态码。 deleteWorksheet (index?: number): void void 删除工作表；index 不传时删除活动工作表。 getWorksheetName (index?: number): string string 获取工作表名称；index 不传时读取活动工作表。 getColorPalette (): { theme: unknown[]; standard: unknown[] } { theme; standard } 获取调色板。 getCellNumberFormats (): string[] string[] 获取数字格式分类列表。 getNumberFormatExample (format: string, value?: unknown, lcid?: unknown): unknown unknown 获取一个数字格式示例。 getNumberFormatExamples (formats: string[], value?: unknown, lcid?: unknown): unknown unknown 批量获取数字格式示例。 isWorksheetProtected (index?: number): boolean boolean 判断工作表是否受保护；index 不传时检查活动工作表。 示例： Worksheet 方法 签名 返回 说明 isFrozenPane (): boolean boolean 当前是否冻结窗格。 toggleFreezePanes (): void void 切换冻结/取消冻结窗格。 setRowHeight (heightPt: number): Promise<unknown Promise<unknown 设置当前行高；空值会被忽略。 insertRows (): Promise<unknown Promise<unknown 插入行。 hideRows (): Promise<unknown Promise<unknown 隐藏行。 unhideRows (): Promise<unknown Promise<unknown 取消隐藏行。 deleteRows (): Promise<unknown Promise<unknown 删除行。 insertColumns (): Promise<unknown Promise<unknown 插入列。 setColumnWidth (nChars: number): void void 设置当前列宽，单位为字符宽度；空值会被忽略。 hideColumns (): Promise<unknown Promise<unknown 隐藏列。 unhideColumns (): Promise<unknown Promise<unknown 取消隐藏列。 deleteColumns (): Promise<unknown Promise<unknown 删除列。 getRowHeight (row?: number \\ null, wsIdx?: number \\ null): number number 获取行高；不传或传 null 时读取当前上下文。 getColumnWidth (col?: number \\ null, wsIdx?: number \\ null): number number 获取列宽；不传或传 null 时读取当前上下文。 示例： Selection Selection 方法作用于当前活动单元格或选区。 方法 签名 返回 说明 clearContents (): void void 清空当前选区内容。 setAccountingFormat (value: AccountingFormat): Promise<unknown \\ false Promise<unknown \\ false 设置会计格式；格式值无效时可能返回 false。 setUnderline (value: string): void void 设置下划线。 setBorder (value: BorderValue): void void 设置边框。 setStrikeThrough (value: boolean): void void 设置删除线。 setBold (value: boolean): void void 设置粗体。 setItalic (value: boolean): void void 设置斜体。 setFontSize (value: string \\ number): void void 设置字号；必须为 0 < value <= 409。 setHorizontalAlignment (value: string): void void 设置水平对齐。 setVerticalAlignment (value: string): void void 设置垂直对齐。 setFontColor (value: XlsxColor): void void 设置字体颜色。 setFillColor (value: XlsxColor): void void 设置填充色。 setFontName (value: string): void void 设置字体。 setCellStyle (value: string): Promise<unknown Promise<unkno"},{"title":"PPTX API","path":"api-reference/pptx.html","href":"pptx.html","text":"PPTX API PPTX API 通过 widget.render() 返回的 app 调用： 组件 Component 说明 Document 页码、缩放、布局、导出、只读状态 Paragraph 文本字体、颜色、字号、加粗、斜体、下划线、删除线、段落水平对齐 TextBox 文本框垂直对齐 Player 启动放映、放映态跳转、全屏播放 Selection 选区类型、文本样式查询、选区变化事件 Viewer 获取缩略图区域当前活动目标。 UndoRedo 撤销、重做和可用状态 快速示例 事件示例： Document 方法 签名 返回 说明 getSlideInfo (): { total: number; current: number } { total; current } 获取总页数与当前页，页码从 1 开始。 getCurrentSlideIndex (): number number 获取当前页码，页码从 1 开始。 getSlideCount (): number number 获取总页数。 getZoom (): number number 获取缩放比例。 setZoom (value: number): void void 设置缩放比例，常用值如 80、100、120。 autoZoom (): void void 自动缩放。 focusEditor (): void void 当前 PPTX 实现为空操作。 updateVisibleArea (): void void 重新计算可视区域。 goToSlide (slideNum: number): void void 跳转到幻灯片，slideNum 从 1 开始。 deleteSlides (slides?: number[]): void void 删除指定幻灯片索引；不传时删除当前选中的幻灯片。slides 使用从 0 开始的索引。 addSlide (layout?: SlideLayoutRef, position?: number): void void 插入新幻灯片；layout 使用布局索引，position 是从 0 开始的插入位置。不传 layout 时沿用当前选区附近的布局。 getSlideLayouts (force?: boolean): SlideLayoutItem[][] SlideLayoutItem[][] 按母版分组获取布局列表；force = true 时刷新缓存。 exportDocument (): Promise<void Promise<void 导出 PPTX 原文件。 copy (): Promise<void Promise<void 复制当前选区。 cut (): Promise<void Promise<void 剪切当前选区。 paste (): Promise<void Promise<void 粘贴到当前选区。 getColorPalette (): { theme: unknown[]; standard: unknown[] } { theme; standard } 获取主题色和标准色。 startReadOnly (): void void 进入只读状态。 endReadOnly (): void void 退出只读状态。 isReadOnly (): boolean boolean 当前是否只读。 isDisable (): boolean boolean 当前编辑器是否处于禁用状态。 goToSlide(slideNum) 使用从 1 开始的展示页码；deleteSlides(slides) 和 addSlide(layout, position) 使用从 0 开始的底层索引。 Document 示例： Document 支持的组件事件： 事件名 payload 说明 DOCUMENT READY 事件参数透传 文档 ready。 DOCUMENT EXPORT READY 事件参数透传 导出完成。 PPTX SLIDES CHANGED (currentPage: number, totalPages: number) 当前页或页数变化。 PPTX ZOOM CHANGE (zoom: number) 缩放变化。 PPTX FIRST PAGE LOADED 无 第一页加载完成。 PPTX START LOADING 无 开始加载。 Paragraph 方法 签名 返回 说明 setFontName (value: string): void void 设置字体。 setFontColor (value: string \\ { hex: string; [key: string]: unknown }): void void 设置字体颜色。对象形式必须包含 hex；新接入建议统一使用 { hex: \" RRGGBB\" } 对象。 setFontSize (value: number \\ string): void void 设置字号。 setBold (value: boolean): void void 设置粗体。 setItalic (value: boolean): void void 设置斜体。 setUnderline (value: boolean): void void 设置下划线。 setStrikeThrough (value: boolean): void void 设置删除线。 setAlignment (value: 0 \\ 1 \\ 2 \\ 3 \\ 4): void void 设置段落水平对齐。 decreaseFontSize (): void void 减小字号。 increaseFontSize (): void void 增大字号。 setAlignment(value) 枚举： 值 说明 0 右对齐 1 左对齐 2 居中 3 两端对齐 4 分散对齐 Paragraph 示例： PPTX setFontColor(...) 当前只会按 hex 解析对象颜色；type、name、theme、tint 等字段可作为色盘元数据随对象携带，但不能省略 hex，也不支持仅传 { name, theme } 形式的主题色。 TextBox 方法 签名 返回 说明 setVerticalAlignment (value: 0 \\ 1 \\ 2 \\ 3 \\ 4): void void 设置文本框垂直对齐。 setVerticalAlignment(value) 枚举： 值 说明 0 顶部 1 居中 2 底部 3 两端分布 4 分散分布 示例： Player 方法 签名 返回 说明 playFirst (): void void 在当前放映态跳到第一页。 playLast (): void void 在当前放映态跳到最后一页。 play (fromType: 1 \\ 2): void void 启动幻灯片放映。 playPrevious (): void void 在当前放映态跳到上一页。 playNext (): void void 在当前放映态跳到下一页。 enterFullScreen (fromType: 1 \\ 2): void void 进入全屏。 exitFullScreen (): void void 退出全屏。 fromType： 值 说明 1 从头开始 2 从当前页开始 示例： Selection 方法 签名 返回 说明 isTextSelected (): boolean boolean 当前是否处于文本选区或文本编辑上下文；光标在文本框内但没有选中字符时也可能为 true。 isShapeSelected (): boolean boolean 当前是否选中图形。 isUnderline (): boolean boolean 当前文本是否为单下划线。 isStrikeThrough (): \"\" \\ \"noStrike\" \\ \"sngStrike\" \\ \"dblStrike\" \\ null string \\ null 获取当前文本的删除线状态值；混合状态可能返回空字符串，没有可解析值时可能返回 null。 getFontSize (): string string 获取当前字号；混合字号时返回最小字号加 +。 getFontName (): string \\ null string \\ null 获取当前字体；混合字体时返回空字符串。 isBold (): boolean \\ 0 \\ null boolean \\ 0 \\ null 获取粗体状态；混合状态时可能返回 0。 isItalic (): boolean \\ 0 \\ null boolean \\ 0 \\ null 获取斜体状态；混合状态时可能返回 0。 getFontColor (): string string 获取字体颜色，当前返回 rgba(...) 字符串；alpha 值来自底层数据，不能假定已归一化到 CSS 的 0 到 1。混合颜色、非纯色填充或暂不支持的填充类型当前会回退为 rgba(0,0,0,1)。 getAlignment (): \"default\" \\ \"right\" \\ \"left\" \\ \"center\" \\ \"justify\" \\ \"distribute\" \\ \"nil\" string 获取段落水平对齐。 getVerticalAlignment (): \"top\" \\ \"cen"}];</script>
+  <script>window.STATIC_DOCS_I18N = {"searchPrompt":"输入关键词搜索文档…","searchNoResults":"没有匹配结果"};</script>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

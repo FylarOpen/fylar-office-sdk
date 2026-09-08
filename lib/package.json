@@ -1,0 +1,38 @@
+{
+  "name": "@office/office-sdk",
+  "version": "1.0.0",
+  "description": "Office SDK",
+  "license": "SEE LICENSE IN legal.txt",
+  "private": true,
+  "type": "module",
+  "types": "./UI.d.ts",
+  "style": "./style.css",
+  "exports": {
+    ".": {
+      "types": "./UI.d.ts",
+      "import": "./UI.js",
+      "default": "./UI.js"
+    },
+    "./UI": {
+      "types": "./UI.d.ts",
+      "import": "./UI.js",
+      "default": "./UI.js"
+    },
+    "./UI.js": {
+      "types": "./UI.d.ts",
+      "import": "./UI.js",
+      "default": "./UI.js"
+    },
+    "./preload": {
+      "import": "./preload.js",
+      "default": "./preload.js"
+    },
+    "./preload.js": {
+      "import": "./preload.js",
+      "default": "./preload.js"
+    },
+    "./style.css": "./style.css",
+    "./manifest.json": "./manifest.json",
+    "./package.json": "./package.json"
+  }
+}

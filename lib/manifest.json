@@ -1,0 +1,38 @@
+{
+  "name": "@office/office-sdk",
+  "version": "1.0.0",
+  "generatedAt": "2026-09-08T09:10:40.202Z",
+  "format": "esm",
+  "root": "./",
+  "entries": {
+    "ui": "./UI.js",
+    "preload": "./preload.js",
+    "style": "./style.css",
+    "core": "./office.core.js",
+    "locale": "./office.locale.js",
+    "browser": "./UI.js"
+  },
+  "runtime": {
+    "compatGlobals": "./compat-globals.js",
+    "worker": "./worker/index.js",
+    "localeBundle": "./locale-assets/locale.js",
+    "localeAssets": "./locale-assets/deploy/i18n",
+    "documentSamples": "./locale-assets/deploy/sample",
+    "vendor": "./vendor",
+    "wasmFiles": [
+      "./worker/wasm/bootloader.wasm",
+      "./worker/wasm/canvaskit.wasm",
+      "./worker/wasm/cfb2ooxml.wasm",
+      "./worker/wasm/emfjs.wasm",
+      "./worker/wasm/vml2dml.wasm"
+    ]
+  },
+  "internalChunks": {
+    "apiBase": "./ApiBase.js",
+    "uiRuntime": "./UI.runtime.js",
+    "docx": "./mountDocxApp.js",
+    "xlsx": "./mountXlsxApp.js",
+    "pptx": "./mountPptxApp.js",
+    "dropdownPopoverList": "./DropdownPopoverList.js"
+  }
+}

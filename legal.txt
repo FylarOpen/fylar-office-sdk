@@ -71,7 +71,7 @@ the separate written agreement controls for its subject matter.
 4. License Validation and Metering
 
 The SDK may contact Licensor's licensing service, including
-https://licenseopen.fylar.ai, to validate a License Credential, measure Metered
+https://openlicense.fylar.ai, to validate a License Credential, measure Metered
 Uses, prevent abuse, and administer entitlements. This communication may
 include the License Credential and technical or usage data reasonably necessary
 for those purposes. Licensee is responsible for providing any notices and

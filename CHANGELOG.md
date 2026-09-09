@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+### Fixed
+
+- Updated the default license service URL to `https://openlicense.fylar.ai`.
+
 ## 1.0.0
 
 ### Changed

@@ -1,6 +1,6 @@
 {
   "name": "@fylar/office-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Commercial browser SDK for viewing and editing DOCX, XLSX, and PPTX documents.",
   "license": "SEE LICENSE IN legal.txt",
   "author": "Fylar",

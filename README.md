@@ -1,6 +1,6 @@
 # Fylar Office SDK Examples and Documentation
 
-> **Version**: 1.0.0 | **Last updated**: 2026-09-08
+> **Version**: 1.0.1 | **Last updated**: 2026-09-09
 
 English · [简体中文](./README.zh-CN.md)
 
